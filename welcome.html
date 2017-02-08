@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Welcome</title>
+    </head>
+    <body>
+        <h1>Welcome {{username}}</h1>
+        <br>
+        <br>
+            {% for cr in credentials %}
+                <br>
+                <br>
+                {{cr.username}}
+                {{cr.password}}
+                <br>
+            {% endfor %}
+    </body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>HW4-Reg</title>
+        <style>
+            .error {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h2 class="headline">HW4 Registration</h2>
+        <hr>
+        <br>
+        <br>
+        <form method="post">
+            <label>
+                Username:
+                <input type="text" name="username" value="{{username}}">  <!--maybe need a value="{{r_username}}"-->
+                <div class="error">
+                    {{error_username}}
+                </div>
+            </label>
+            <br>
+            <label>
+                Password:
+                <input type="password" name="password">
+                <div class="error">
+                    {{error_password}}
+                </div>
+            </label>
+            <br>
+            <label>
+                Verify Password:
+                <input type="password" name="verify">
+                <div class="error">
+                    {{error_verify}}
+                </div>
+            </label>
+            <br>
+            <label>
+                Email (optional):
+                <input type="text" name="email" value="{{email}}">
+                <div class="error">
+                    {{error_email}}
+                </div>
+            </label>
+            <br>
+            <br>
+            <button>Submit</button>
+        </form>
+    </body>
+</html>

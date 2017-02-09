@@ -5,6 +5,7 @@ import hmac
 import hashlib
 from string import letters
 import random
+from time import sleep
 
 
 import webapp2
@@ -17,6 +18,7 @@ SECRET = 'LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR'  # "salt" for the 
 
 
 from google.appengine.ext import db
+# from google.appengine.api import users  # I think this is only if I want people to login through their Google accounts
 
 
 template_dir = os.path.join(os.path.dirname(__file__))#, 'templates') - I chose not to create a template directory for ease of use while learning.
@@ -60,9 +62,10 @@ def make_secure_val(s):
 
 def check_secure_val(h):
     # string,hashstr = h.split(',')
-    val = h.split('|')[0]
-    if h == make_secure_val(val):
-        return val
+    if h:
+        val = h.split('|')[0]
+        if h == make_secure_val(val):
+            return val
 
 
 
@@ -194,7 +197,7 @@ class Signup(Handler):
             # self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % (str(username)))  # Set a Cookie in App Engine
                                                    # I think this should be: % make_secure_val(username))
             self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
-            # self.login(c)
+            self.login(c)
             # global passer
             # passer = str(c.key().id())
             # global passer
@@ -221,27 +224,35 @@ class Login(Handler):
         password = self.request.get('password')
         proceed = False
 
-        credentials = db.GqlQuery("SELECT * FROM Credential")
-
-        for cr in credentials:
-            # if cr.username == username and pwhasher(password) == cr.hashed_password:
-            # self.write(cr.hashed_password)
-            # self.write('<br>')
-            if cr.username == username and valid_pw(username, password, cr.hashed_password):  # TODO: implement hashed_password Verification
-            # if cr.username == username and make_pw_hash(username,password,salt=None) == cr.hashed_password:
 
 
-                # send to welcome screen, and set the cookie
-                # self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % (str(username)))  # Set a Cookie in App Engine
-                                                       # I think this should be: % make_secure_val(username))
+        # credentials = db.GqlQuery("SELECT * FROM Credential ORDER BY created")
+        #
+        # for cr in credentials:
+        #     if cr.username == username and valid_pw(username, password, cr.hashed_password):  # TODO: implement hashed_password Verification
+        #
+        #         # send to welcome screen, and set the cookie
+        #         self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
+        #         u = cr
+        #         self.login(u)
+        #
+        #         proceed = True
+        #         self.redirect("/welcome")
+
+
+
+        # Try alternate syntax, without using GQL:
+        self.query = Credential.all()
+        for self.credential in self.query:
+            if self.credential.username == username and valid_pw(username, password, self.credential.hashed_password):
                 self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
-                # u = cr.id()
-                # self.login()  # TODO: put something here that works!!!
-                # self.login(passer)
-                #### Will need some jujitsu - but I think it can be done !!
+                u = self.credential  #.key().id()
+                self.login(u)
 
                 proceed = True
                 self.redirect("/welcome")
+
+
 
         if not proceed:
             self.render('login.html', error_login='Login Invalid')
@@ -252,7 +263,7 @@ class Logout(Handler):
         # delete cookie
         usn = self.request.cookies.get('user')  # TODO: Remove this once I confirm it isn't necessary. (getting the user cookie before deleting it)
         self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % (''))
-        # self.logout()
+        self.logout()
         self.redirect("/signup")
 
 class MainPage(Handler):
@@ -326,6 +337,46 @@ class PostPage(Handler):
 
 #######   END   #########
 
+class Email(db.Model):
+    subject = db.StringProperty(required = True)
+    email = db.TextProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+    last_modified = db.DateTimeProperty(auto_now = True)
+    creator = db.StringProperty(required = True)
+    name = db.StringProperty(required = False)
+
+
+class Tester(Handler):
+    def get(self):
+        # self.write("the user is currently: %s" % self.user.key())
+        emails = db.GqlQuery("SELECT * FROM Email ORDER BY created DESC LIMIT 10")
+        self.render('testerform.html', emails=emails)
+
+
+    def post(self):
+        subject = self.request.get('subject')
+        email = self.request.get('email')
+        if self.read_secure_cookie('user_id'):
+            creator1 = self.request.cookies.get('user_id')
+            # val = h.split('|')[0]
+            creator = creator1.split('|')[0]
+            name1 = self.request.cookies.get('user')
+            name = name1.split('|')[0]
+        else:
+            creator = 'no user set'
+            name = 'no user set'
+
+        if subject and email:  # and self.read_secure_cookie('user'):
+            e = Email(subject=subject, email=email, creator=creator, name=name)
+            e.put()
+            sleep(1)
+            self.redirect("/tester")
+
+        # emails = db.GqlQuery("SELECT * FROM Email ORDER BY created DESC LIMIT 10")
+        # self.render("testerform.html", emails=emails)
+
+
+
 
 
 
@@ -340,5 +391,6 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ("/blog", Blog),
                                ("/blog/newpost", NewPost),
                                ("/blog/([0-9]+)", PostPage),
+                               ("/tester", Tester),
                                 ],
                                 debug=True)

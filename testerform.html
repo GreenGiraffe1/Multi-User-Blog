@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testerform</title>
+        <style>
+            .hist-subject {
+                /*font-weight: bold;*/
+                text-transform: capitalize;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>This is the Testerform!</h1>
+        <hr>
+        <br>
+        <br>
+        <form method="post">
+            <label>
+                Subject:
+                <br>
+                <input type="text" name="subject" value="{{subject}}">
+            </label>
+            <br>
+            <br>
+            <label>
+                Email Body:
+                <br>
+                <textarea name="email" rows="8" cols="80">{{email}}</textarea>
+            </label>
+            <br>
+            <input type="submit">
+        </form>
+        <br>
+        <br>
+        <br>
+        <hr>
+        <br>
+        <br>
+        <br>
+        <h2>Email History:</h2>
+        <br>
+            {% if emails %}
+                {% for email in emails %}
+                    <br>
+                    <br>
+                    <div class="hist-subject">Subject: {{email.subject}}</div>
+                    <div class="hist-email">Content:   {{email.email}}</div>
+                    <!-- <div class="from">From: {{email.creator}}</div> -->
+                    <div class="experimental">Email-Key: {{email.key()}}</div>
+                    <div class="key-id">Email-ID: {{email.key().id()}}</div>
+                    <div class="creator-id">From User-ID: {{email.creator}}</div>
+                    <div class="creator-name"> From User-Name: {{email.name}}</div>
+
+
+                    <br>
+                    <br>
+                {% endfor %}
+            {% endif %}
+    </body>
+</html>

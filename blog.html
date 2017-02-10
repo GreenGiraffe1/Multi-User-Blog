@@ -32,6 +32,12 @@
                 <hr>
                 <div class="post-content">{{post.content}}</div>
                 <br>
+                <div class="post-content">Poster-Name: {{post.name}}</div>
+                <div class="post-content">Poster-ID: {{post.creator}}</div>
+                <div class="post-content">Post-ID: {{post.key().id()}}</div>
+                <div class="post-content">Post-Key: {{post.key()}}</div>
+                <br>
+                <br>
                 <br>
             {% endfor %}
     </body>

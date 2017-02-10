@@ -141,7 +141,8 @@ class Post(db.Model):
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
-    creator = db.StringProperty(required = True)
+    creator = db.StringProperty(required = False)
+    name = db.StringProperty(required = False)
 
 
 
@@ -298,8 +299,12 @@ class NewPost(Handler):
 
 
 
-        if subject and content and self.read_secure_cookie('user'):
-            p = Post(subject=subject, content=content)
+        if subject and content and self.read_secure_cookie('user') and self.read_secure_cookie('user_id'):
+            name1 = self.request.cookies.get('user')
+            name = name1.split('|')[0]
+            creator1 = self.request.cookies.get('user_id')
+            creator = creator1.split('|')[0]
+            p = Post(subject=subject, content=content, creator=creator, name=name)
             p.put()
             self.write("This worked - now you need to create a redirect.")
             self.redirect("/blog/%s" % str(p.key().id()))

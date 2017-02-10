@@ -327,6 +327,14 @@ class Blog(Handler):
         self.render_fpage()
 
 
+class Comment(db.Model):
+    content = db.StringProperty(required = True)
+    created = db.DateTimeProperty(auto_now_add = True)
+    last_modified = db.DateTimeProperty(auto_now = True)
+    creator = db.StringProperty(required = True)
+    name = db.StringProperty(required = False)
+    post_id = db.StringProperty(required = True)
+
 class PostPage(Handler):
     def get(self, post_id):
         key = db.Key.from_path("Post", int(post_id))  # WOW - This is Awesome!!  I will use this code in the Future! *****
@@ -342,7 +350,56 @@ class PostPage(Handler):
             self.error(404)
             return
 
-        self.render("permalink.html", post=post, current_user=current_user)
+
+        # # Try alternate syntax, without using GQL:
+        # self.query = Credential.all()
+        # for self.credential in self.query:
+        #     if self.credential.username == username and valid_pw(username, password, self.credential.hashed_password):
+        #         self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
+        #         u = self.credential  #.key().id()
+        #         self.login(u)
+        # proceed = True
+        # self.redirect("/welcome")
+
+
+
+        # TODO: Put here - the db query !!!!!!!!
+        # self.query = Comment.all()
+        # for self.comment in self.query:
+        #     if self.comment.post_id == post_id:
+        comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created DESC")
+
+
+
+
+
+
+        self.render("permalink.html", post=post, current_user=current_user, comments=comments)
+
+
+    def post(self, post_id):
+        key = db.Key.from_path("Post", int(post_id))  # COPIED verbatim from above - think I need it here, but not sure.
+        post = db.get(key)
+        comment = self.request.get("comment")
+        if self.read_secure_cookie('user_id'):
+            current_user = (self.request.cookies.get('user_id')).split('|')[0]
+            current_name = (self.request.cookies.get('user')).split('|')[0]
+        else:
+            current_user = None
+            current_name = None
+
+
+        c = Comment(content=comment, name=current_name, creator=current_user, post_id=post_id)
+        c.put()
+        sleep(1)
+        # self.redirect("/blog/%s" % str(p.key().id()))
+        self.redirect("/blog/%s" % str(post_id))
+
+
+
+
+
+
 
 
 
@@ -385,6 +442,7 @@ class Tester(Handler):
 
         # emails = db.GqlQuery("SELECT * FROM Email ORDER BY created DESC LIMIT 10")
         # self.render("testerform.html", emails=emails)
+
 
 
 

@@ -20,7 +20,7 @@
         <br>
         <form class="comment" method="post">
 
-            
+
             <button type="button" name="like">Like!</button>
             <br>
             <br>
@@ -36,5 +36,16 @@
         <br>
         <br>
         <h3>Comments:</h3>
+            {% for comment in comments %}
+                <br>
+                <div class="comment-content">{{comment.content}}</div>
+                <div class="comment-author">By: {{comment.name}}</div>
+                <br>
+            {% endfor %}
+        <br>
+        <br>
+        <br>
+
+
     </body>
 </html>

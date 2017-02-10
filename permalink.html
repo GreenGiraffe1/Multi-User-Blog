@@ -12,10 +12,29 @@
         <br>
         <br>
         <!-- <div class="date-created">{{post.created}}</div> -->
-        <div class="post-subject">{{post.subject}}</div>
+        <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
+        <div class="poster">By: {{post.name}}</div>
         <hr>
+        <div class="post-subject"><b>{{post.subject}}</b></div>
         <div class="post-content">{{post.content}}</div>
         <br>
+        <form class="comment" method="post">
+
+            
+            <button type="button" name="like">Like!</button>
+            <br>
+            <br>
+            <br>
+            <label>
+                Leave a Comment:
+                <br>
+                <textarea name="comment" rows="8" cols="80"></textarea>
+            </label>
+            <br>
+            <button type="submit" name="button">Submit</button>
+        </form>
         <br>
+        <br>
+        <h3>Comments:</h3>
     </body>
 </html>

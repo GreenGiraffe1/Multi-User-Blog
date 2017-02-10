@@ -14,6 +14,10 @@
             .post-subject {
                 font-size: 20px;
                 font-weight: bold;
+                /*color: black;*/
+            }
+            .title-link {
+                color: black;
             }
         </style>
     </head>
@@ -28,21 +32,25 @@
                 <br>
                 <br>
                 <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
-                <div class="post-subject">{{post.subject}}</div>
+                <div class="poster">By: {{post.name}}</div>
                 <hr>
+                <div class="post-subject">
+                    <a class="title-link" href="/blog/{{post.key().id()}}">
+                        {{post.subject}}
+                    </a>
+                </div>
+                <!-- <hr> -->
                 <div class="post-content">{{post.content}}</div>
                 <br>
+                <form class="view-post" action="/blog/{{post.key().id()}}">
+                    <input type="submit" value="View Post">
+                </form>                
                 <div class="post-content">Poster-Name: {{post.name}}</div>
                 <div class="post-content">Poster-ID: {{post.creator}}</div>
                 <div class="post-content">Post-ID: {{post.key().id()}}</div>
                 <div class="post-content">Post-Key: {{post.key()}}</div>
-                <!-- <button type="button" name="edit">Edit / Delete</button>
-                <button type="button" name="like">Like</button>
-                <button type="button" name="comment">Comment</button> -->
                 <!-- <button type="button" name="view">View Post</button> -->
-                <form class="view-post" action="/blog/{{post.key().id()}}">
-                    <input type="submit" value="View Post">
-                </form>
+
                 <br>
                 <br>
                 <br>

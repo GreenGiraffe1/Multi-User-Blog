@@ -329,14 +329,20 @@ class Blog(Handler):
 
 class PostPage(Handler):
     def get(self, post_id):
-        key = db.Key.from_path("Post", int(post_id))
+        key = db.Key.from_path("Post", int(post_id))  # WOW - This is Awesome!!  I will use this code in the Future! *****
         post = db.get(key)
+        if self.read_secure_cookie('user_id'):
+            current_user = (self.request.cookies.get('user_id')).split('|')[0]
+        else:
+            current_user = None
+            # val = h.split('|')[0]
+            # creator = creator1.split('|')[0]
 
         if not post:
             self.error(404)
             return
 
-        self.render("permalink.html", post=post)
+        self.render("permalink.html", post=post, current_user=current_user)
 
 
 

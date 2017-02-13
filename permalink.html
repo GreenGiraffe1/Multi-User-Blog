@@ -17,6 +17,14 @@
         <hr>
         <div class="post-subject"><b>{{post.subject}}</b></div>
         <div class="post-content">{{post.content}}</div>
+            {% if current_user == post.creator %}
+                <form class="view-post" action="/blog">
+                    <input type="submit" value="edit (n/a yet)">
+                </form>
+                <form class="view-post" action="/blog">
+                    <input type="submit" value="delete (n/a yet)">
+                </form>
+            {% endif %}
         <br>
         <form class="comment" method="post">
 

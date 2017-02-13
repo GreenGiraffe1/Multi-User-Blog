@@ -25,11 +25,22 @@
                 <form class="view-post" action="/blog">
                     <input type="submit" value="delete (n/a yet)">
                 </form>
-            {% else %}
+            {% elif current_user != post.creator and display == 'like' %}
                 <!-- This is experimental !!! -->
                 <form class="like" method="post">
 
                     <button type="submit" name="like1" value="True">Like!</button>
+                <!-- I think I can make this work cy just checking the existince of a text value for this variable -->
+
+                <!-- <form class="like-post" method="post" action="/blog">
+                    <input type="submit" value="Like! (n/a yet)">
+                </form> -->
+                </form>
+            {% elif current_user != post.creator and display == 'unlike' %}
+                <!-- This is experimental !!! -->
+                <form class="like" method="post">
+
+                    <button type="submit" name="unlike" value="True">Unlike</button>
                 <!-- I think I can make this work cy just checking the existince of a text value for this variable -->
 
                 <!-- <form class="like-post" method="post" action="/blog">

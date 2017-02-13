@@ -366,13 +366,22 @@ class PostPage(Handler):
             if likey.does_like and likey.post_id == post_id: # Second condition is if the ID matches..
                 count = count + 1
 
+        display = 'like'
+        for li in likez:
+            if li.post_id == post_id and li.creator == current_user and li.does_like:
+                display = 'unlike'
+                # dkey_vis = li.key()
+            # elif li.post_id == post_id and li.creator == current_user and not li.does_like
+            #     display = 'like'
+
+
 
 
         self.query = Comment.all().order('-created')
 
 
 
-        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id, count=count)#comments)
+        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id, count=count, likez=likez, display=display)#, dkey_vis=dkey_vis)#comments)
 
 
     def post(self, post_id):
@@ -391,12 +400,36 @@ class PostPage(Handler):
         if self.request.get("like1"):
             l = Likez(creator=current_user, name=current_name, post_id=post_id, does_like=True)
             l.put()
-            sleep(.5)
+            sleep(.2)
+
+        if self.request.get("unlike"):
+            likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
+            delkey = None
+            for likey in likez:
+                if likey.creator == current_user and likey.does_like:
+                    delkey = likey.key()
+                    # This works - I just need to FIX - the below !! (syntax is wrong)
+
+            if delkey:
+                # entry = delkey.get()
+                # entry.key.delete()
+                db.delete(delkey)
+                sleep(.2)
+            # HERE - I need to retrieve the key for the like entry, for this user, and then delete that key.
+            # I think I'll retrieve it using my user_id... and need one more piece of information???
+
+
+            # l = Likez(creator=current_user, name=current_name, post_id=post_id, does_like=False)
+            # l.put()
+            # sleep(.5)
+        ######################      HERE - I need a way of changing the former DB entry (not making a new one.) Maybe the Key?  ################
+        ######################    HereTO - I can just delete the like from the database!  That seems the easiest solution!!
+
 
         if comment:
             c = Comment(content=comment, name=current_name, creator=current_user, post_id=post_id)
             c.put()
-            sleep(1)
+            sleep(.2)
         # self.redirect("/blog/%s" % str(p.key().id()))
         self.redirect("/blog/%s" % str(post_id))
 

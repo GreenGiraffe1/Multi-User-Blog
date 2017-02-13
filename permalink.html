@@ -42,9 +42,18 @@
                 <br>
                 <div class="comment-content">{{cm.content}}</div>
                 <div class="comment-author">By: {{cm.name}}</div>
-                {{cm.post_id}}
+                Posted to: {{cm.post_id}}
                 <br>
-                {{cur_post_id}}
+                Current: {{cur_post_id}}
+                <br>
+                    {% if current_user == cm.creator %}
+                        <form class="view-post" action="/blog">
+                            <input type="submit" value="edit (n/a yet)">
+                        </form>
+                        <form class="view-post" action="/blog">
+                            <input type="submit" value="delete (n/a yet)">
+                        </form>
+                    {% endif %}
                 <br>
                 {% endif %}
             {% endfor %}

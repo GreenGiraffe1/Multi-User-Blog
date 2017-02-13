@@ -370,7 +370,7 @@ class PostPage(Handler):
 
         # bab = db.Query(Comment)  #.order('-created')  # (Comment.post_id == post_id).order(-Comment.created)
 
-        self.query = Comment.all()#.order('-created')
+        self.query = Comment.all().order('-created')
 
 
 

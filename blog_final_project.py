@@ -334,6 +334,14 @@ class Comment(db.Model):
     name = db.StringProperty(required = False)
     post_id = db.StringProperty(required = True)
 
+class Likez(db.Model):
+    does_like = db.BooleanProperty(required = True) #I need a True / False Value..., then I'll need to count up the "True's"
+    created = db.DateTimeProperty(auto_now_add = True)
+    last_modified = db.DateTimeProperty(auto_now = True)
+    creator = db.StringProperty(required = True)
+    name = db.StringProperty(required = False)
+    post_id = db.StringProperty(required = True)
+
 class PostPage(Handler):
     def get(self, post_id):
         key = db.Key.from_path("Post", int(post_id))  # WOW - This is Awesome!!  I will use this code in the Future! *****
@@ -350,35 +358,21 @@ class PostPage(Handler):
             self.error(404)
             return
 
-        # # Try alternate syntax, without using GQL:
-        # self.query = Credential.all()
-        # for self.credential in self.query:
-        #     if self.credential.username == username and valid_pw(username, password, self.credential.hashed_password):
-        #         self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
-        #         u = self.credential  #.key().id()
-        #         self.login(u)
-        # proceed = True
-        # self.redirect("/welcome")
+
+        likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
+
+        count = 0
+        for likey in likez:
+            if likey.does_like:
+                count = count + 1
 
 
-
-        # TODO: Put here - the db query !!!!!!!!
-        # self.query = Comment.all()
-        # for self.comment in self.query:
-        #     if self.comment.post_id == post_id:
-        # comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created DESC")
-
-        # bab = db.Query(Comment)  #.order('-created')  # (Comment.post_id == post_id).order(-Comment.created)
 
         self.query = Comment.all().order('-created')
 
 
 
-
-
-
-
-        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id)#comments)
+        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id, count=count)#comments)
 
 
     def post(self, post_id):
@@ -393,10 +387,16 @@ class PostPage(Handler):
             current_name = None
             self.redirect("/signup")
 
+        # I'll attempt to create the liking here
+        if self.request.get("like1"):
+            l = Likez(creator=current_user, name=current_name, post_id=post_id, does_like=True)
+            l.put()
+            sleep(.5)
 
-        c = Comment(content=comment, name=current_name, creator=current_user, post_id=post_id)
-        c.put()
-        sleep(1)
+        if comment:
+            c = Comment(content=comment, name=current_name, creator=current_user, post_id=post_id)
+            c.put()
+            sleep(1)
         # self.redirect("/blog/%s" % str(p.key().id()))
         self.redirect("/blog/%s" % str(post_id))
 
@@ -447,7 +447,6 @@ class Tester(Handler):
 
         # emails = db.GqlQuery("SELECT * FROM Email ORDER BY created DESC LIMIT 10")
         # self.render("testerform.html", emails=emails)
-
 
 
 

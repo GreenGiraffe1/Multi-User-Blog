@@ -26,6 +26,18 @@
         <br>
         <hr>
         <hr>
+        <form class="view-post" action="/login">
+            <input type="submit" value="Login">
+        </form>
+        <form class="view-post" action="/logout">
+            <input type="submit" value="Logout">
+        </form>
+        <form class="view-post" action="/signup">
+            <input type="submit" value="Register">
+        </form>
+        <form class="view-post" action="/blog/newpost">
+            <input type="submit" value="Create New Post">
+        </form>
         <br>
         <br>
             {% for post in posts %}
@@ -44,7 +56,7 @@
                 <br>
                 <form class="view-post" action="/blog/{{post.key().id()}}">
                     <input type="submit" value="View Post">
-                </form>                
+                </form>
                 <div class="post-content">Poster-Name: {{post.name}}</div>
                 <div class="post-content">Poster-ID: {{post.creator}}</div>
                 <div class="post-content">Post-ID: {{post.key().id()}}</div>

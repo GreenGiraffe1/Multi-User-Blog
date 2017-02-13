@@ -361,9 +361,9 @@ class PostPage(Handler):
 
         likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
 
-        count = 0
+        count = 0  # This counts the number of likes for this post from the database.
         for likey in likez:
-            if likey.does_like:
+            if likey.does_like and likey.post_id == post_id: # Second condition is if the ID matches..
                 count = count + 1
 
 

@@ -24,6 +24,10 @@
                 <form class="view-post" action="/blog">
                     <input type="submit" value="delete (n/a yet)">
                 </form>
+            {% else %}
+                <form class="view-post" action="/blog">
+                    <input type="submit" value="Like! (n/a yet)">
+                </form>
             {% endif %}
         <br>
         <form class="comment" method="post">

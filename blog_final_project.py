@@ -254,7 +254,6 @@ class Login(Handler):
                 self.redirect("/welcome")
 
 
-
         if not proceed:
             self.render('login.html', error_login='Login Invalid')
 
@@ -343,13 +342,13 @@ class PostPage(Handler):
             current_user = (self.request.cookies.get('user_id')).split('|')[0]
         else:
             current_user = None
+            self.redirect("/signup")
             # val = h.split('|')[0]
             # creator = creator1.split('|')[0]
 
         if not post:
             self.error(404)
             return
-
 
         # # Try alternate syntax, without using GQL:
         # self.query = Credential.all()
@@ -367,14 +366,19 @@ class PostPage(Handler):
         # self.query = Comment.all()
         # for self.comment in self.query:
         #     if self.comment.post_id == post_id:
-        comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created DESC")
+        # comments = db.GqlQuery("SELECT * FROM Comment ORDER BY created DESC")
+
+        # bab = db.Query(Comment)  #.order('-created')  # (Comment.post_id == post_id).order(-Comment.created)
+
+        self.query = Comment.all()#.order('-created')
 
 
 
 
 
 
-        self.render("permalink.html", post=post, current_user=current_user, comments=comments)
+
+        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id)#comments)
 
 
     def post(self, post_id):
@@ -387,6 +391,7 @@ class PostPage(Handler):
         else:
             current_user = None
             current_name = None
+            self.redirect("/signup")
 
 
         c = Comment(content=comment, name=current_name, creator=current_user, post_id=post_id)

@@ -21,7 +21,7 @@
         <form class="comment" method="post">
 
 
-            <button type="button" name="like">Like!</button>
+            <!-- <button type="button" name="like">Like!</button> -->
             <br>
             <br>
             <br>
@@ -36,11 +36,17 @@
         <br>
         <br>
         <h3>Comments:</h3>
-            {% for comment in comments %}
+            {% for cm in comments %}
+                <!--This is where the trouble is -->
+                {% if cm.post_id == cur_post_id %}
                 <br>
-                <div class="comment-content">{{comment.content}}</div>
-                <div class="comment-author">By: {{comment.name}}</div>
+                <div class="comment-content">{{cm.content}}</div>
+                <div class="comment-author">By: {{cm.name}}</div>
+                {{cm.post_id}}
                 <br>
+                {{cur_post_id}}
+                <br>
+                {% endif %}
             {% endfor %}
         <br>
         <br>

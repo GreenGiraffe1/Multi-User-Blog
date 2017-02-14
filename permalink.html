@@ -72,7 +72,7 @@
         <h3>Comments:</h3>
             {% for cm in comments %}
                 <!--This is where the trouble is -->
-                {% if cm.post_id == cur_post_id %}
+                {% if cm.post_id == cur_post_id and not cm.mod %}
                 <br>
                 <div class="comment-content">{{cm.content}}</div>
                 <div class="comment-author">By: {{cm.name}}</div>
@@ -80,14 +80,26 @@
                 <br>
                 Current: {{cur_post_id}}
                 <br>
-                    {% if current_user == cm.creator %}
-                        <form class="view-post" action="/blog">
-                            <input type="submit" value="edit (n/a yet)">
+                    {% if current_user == cm.creator and not cm.mod %}
+                        <!-- <form class="view-post" method="post">
+                            <input type="submit" name="edit_c" value="Edit">
+                        </form> -->
+                        <form class="edit" method="post">
+                            <button type="submit" name="edit_c" value="{{cm.key()}}">Edit</button>
                         </form>
                         <form class="view-post" action="/blog">
                             <input type="submit" value="delete (n/a yet)">
                         </form>
                     {% endif %}
+                {% elif cm.post_id ==cur_post_id and current_user == cm.creator and cm.mod %}
+                    <form class="comment-edit" method="post">
+                        Edit Your Comment:
+                        <br>
+                        <textarea name="updated_comment" rows="6" cols="60">{{cm.content}}</textarea>
+                        <br>
+                        <button type="submit" name="update_c" value="{{cm.key()}}">Submit</button>
+                        <button type="submit" action="/blog/{{cm.key().id()}}" name="cancel_u_c" value="{{cm.key()}}">Cancel</button>
+                    </form>
                 <br>
                 {% endif %}
             {% endfor %}

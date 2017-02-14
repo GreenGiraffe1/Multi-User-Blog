@@ -333,7 +333,7 @@ class Comment(db.Model):
     creator = db.StringProperty(required = True)
     name = db.StringProperty(required = False)
     post_id = db.StringProperty(required = True)
-    # mod = db.BooleanProperty(required = False)
+    mod = db.BooleanProperty(required = False)
 
 class Likez(db.Model):
     does_like = db.BooleanProperty(required = True) #I need a True / False Value..., then I'll need to count up the "True's"
@@ -342,6 +342,7 @@ class Likez(db.Model):
     creator = db.StringProperty(required = True)
     name = db.StringProperty(required = False)
     post_id = db.StringProperty(required = True)
+
 
 class PostPage(Handler):
     def get(self, post_id):
@@ -352,13 +353,10 @@ class PostPage(Handler):
         else:
             current_user = None
             self.redirect("/signup")
-            # val = h.split('|')[0]
-            # creator = creator1.split('|')[0]
 
         if not post:
             self.error(404)
             return
-
 
         likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
 
@@ -371,16 +369,8 @@ class PostPage(Handler):
         for li in likez:
             if li.post_id == post_id and li.creator == current_user and li.does_like:
                 display = 'unlike'
-                # dkey_vis = li.key()
-            # elif li.post_id == post_id and li.creator == current_user and not li.does_like
-            #     display = 'like'
-
-
-
 
         self.query = Comment.all().order('-created')
-
-
 
         self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id, count=count, likez=likez, display=display)#, dkey_vis=dkey_vis)#comments)
 
@@ -416,6 +406,32 @@ class PostPage(Handler):
                 # entry.key.delete()
                 db.delete(delkey)
                 sleep(.2)
+
+
+        # key = db.Key.from_path("Post", int(post_id))  # WOW - This is Awesome!!  I will use this code in the Future! *****
+        # post = db.get(key)
+
+        if self.request.get("edit_c"):
+            ckey = self.request.get("edit_c")         # I Can Try Key from Path, if I can't get this syntax to work..!
+            # e = ckey.get()
+            e = db.get(ckey)
+            e.mod = True
+            e.put()
+            sleep(.2)
+
+
+
+        if self.request.get("update_c"):
+            ucom = self.request.get("updated_comment")
+            ukey = self.request.get("update_c")
+            u = db.get(ukey)
+            # u = ukey.get()
+            u.content = ucom
+            u.mod = False
+
+
+            u.put()
+            sleep(.2)
             # HERE - I need to retrieve the key for the like entry, for this user, and then delete that key.
             # I think I'll retrieve it using my user_id... and need one more piece of information???
 
@@ -425,6 +441,16 @@ class PostPage(Handler):
             # sleep(.5)
         ######################      HERE - I need a way of changing the former DB entry (not making a new one.) Maybe the Key?  ################
         ######################    HereTO - I can just delete the like from the database!  That seems the easiest solution!!
+
+        if self.request.get("cancel_u_c"):
+            cankey = self.request.get("cancel_u_c")
+            can = db.get(cankey)
+            can.mod = False
+
+
+            can.put()
+            sleep(.2)
+
 
 
         if comment:

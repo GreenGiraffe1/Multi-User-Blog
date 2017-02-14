@@ -376,6 +376,7 @@ class PostPage(Handler):
 
 
     def post(self, post_id):
+        delete_post = False
         key = db.Key.from_path("Post", int(post_id))  # COPIED verbatim from above - think I need it here, but not sure.
         post = db.get(key)
         comment = self.request.get("comment")
@@ -457,6 +458,13 @@ class PostPage(Handler):
             db.delete(dd_key)
             sleep(.2)
 
+        if self.request.get("delete_p"):
+            dpk = self.request.get("delete_p")
+            db.delete(dpk)
+            delete_post = True
+            sleep(.2)
+
+
 
 
         if comment:
@@ -464,7 +472,11 @@ class PostPage(Handler):
             c.put()
             sleep(.2)
         # self.redirect("/blog/%s" % str(p.key().id()))
-        self.redirect("/blog/%s" % str(post_id))
+
+        if delete_post:
+            self.redirect("/blog")
+        else:
+            self.redirect("/blog/%s" % str(post_id))
 
 
 

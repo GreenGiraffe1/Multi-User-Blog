@@ -24,8 +24,11 @@
                 <form class="view-post" action="/blog">
                     <input type="submit" value="edit (n/a yet)">
                 </form>
-                <form class="view-post" action="/blog">
+                <!-- <form class="view-post" action="/blog">
                     <input type="submit" value="delete (n/a yet)">
+                </form> -->
+                <form class="edit-post" method="post">
+                    <button type="submit" name="delete_p" value="{{post.key()}}">Delete</button>
                 </form>
             {% elif current_user != post.creator and display == 'like' %}
                 <!-- This is experimental !!! -->
@@ -100,7 +103,7 @@
                         <br>
                         <textarea name="updated_comment" rows="6" cols="60">{{cm.content}}</textarea>
                         <br>
-                        <button type="submit" name="update_c" value="{{cm.key()}}">Submit</button>
+                        <button type="submit" name="update_c" value="{{cm.key()}}">Save</button>
                         <button type="submit" action="/blog/{{cm.key().id()}}" name="cancel_u_c" value="{{cm.key()}}">Cancel</button>
                     </form>
                 <br>

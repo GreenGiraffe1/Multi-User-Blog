@@ -333,6 +333,7 @@ class Comment(db.Model):
     creator = db.StringProperty(required = True)
     name = db.StringProperty(required = False)
     post_id = db.StringProperty(required = True)
+    # mod = db.BooleanProperty(required = False)
 
 class Likez(db.Model):
     does_like = db.BooleanProperty(required = True) #I need a True / False Value..., then I'll need to count up the "True's"

@@ -451,6 +451,12 @@ class PostPage(Handler):
             can.put()
             sleep(.2)
 
+        if self.request.get("delete_c"):
+            dd_key = self.request.get("delete_c")
+            # dd = db.get(dd_key)
+            db.delete(dd_key)
+            sleep(.2)
+
 
 
         if comment:

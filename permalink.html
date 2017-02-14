@@ -87,9 +87,12 @@
                         <form class="edit" method="post">
                             <button type="submit" name="edit_c" value="{{cm.key()}}">Edit</button>
                         </form>
-                        <form class="view-post" action="/blog">
-                            <input type="submit" value="delete (n/a yet)">
+                        <form class="edit" method="post">
+                            <button type="submit" name="delete_c" value="{{cm.key()}}">Delete</button>
                         </form>
+                        <!-- <form class="view-post" action="/blog">
+                            <input type="submit" value="delete (n/a yet)">
+                        </form> -->
                     {% endif %}
                 {% elif cm.post_id ==cur_post_id and current_user == cm.creator and cm.mod %}
                     <form class="comment-edit" method="post">

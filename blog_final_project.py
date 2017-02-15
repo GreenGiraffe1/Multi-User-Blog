@@ -397,6 +397,9 @@ class PostPage(Handler):
 
 
     def post(self, post_id):
+        uname = self.identify()
+        # params = {}
+        have_error = False
         delete_post = False
         edit_post = False
         key = db.Key.from_path("Post", int(post_id))  # COPIED verbatim from above - think I need it here, but not sure.
@@ -408,13 +411,22 @@ class PostPage(Handler):
         else:
             current_user = None
             current_name = None
-            self.redirect("/signup")
+            # self.redirect("/signup")
+
+        # params['post']=post
+        # params['comment']=comment
+        # params['uname']=uname
+        # params['comments']=Comment.all().order('-created')
 
         # I'll attempt to create the liking here
-        if self.request.get("like1"):
+        if self.request.get("like1") and uname:
             l = Likez(creator=current_user, name=current_name, post_id=post_id, does_like=True)
             l.put()
             sleep(.2)
+        elif self.request.get("like1") and not uname:
+            # params['error_like'] = "You must be logged in to Like posts."
+            have_error = True
+            self.redirect("/login")
 
         if self.request.get("unlike"):
             likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
@@ -503,6 +515,9 @@ class PostPage(Handler):
             self.redirect("/blog")
         elif edit_post:
             self.redirect("/blog/edit/%s" % str(post_id))
+        elif have_error:
+            # self.render('permalink.html', **params)#, post=post, comment=comment, uname=uname)
+            self.redirect("/login")
         else:
             self.redirect("/blog/%s" % str(post_id))
 

@@ -20,32 +20,58 @@
             .title-link {
                 color: black;
             }
+            .nav4blog {
+                display: inline;
+                /*flex-wrap: nowrap;*/
+            }
+            .log-io {
+                display: inline;
+            }
+            .blog-title-link {
+                text-decoration: none;
+                color: black;
+            }
         </style>
     </head>
     <body>
-        <h1>FS-ND Blog</h1>
+        <!-- <h1>FS-ND Blog</h1>
+        <br> -->
+        <h1><a class="blog-title-link" href="/blog">FS-ND Blog</a></h1>
+        <!-- <br>
+        <a class="blog-link" href="/blog">
+            <h1>FS-ND Blog</h1>
+        </a> -->
         <br>
+            {% if uname %}
+                <p class="log-io">You're currently logged in as: {{uname}}</p>
+                <a class="log-io" href="/logout">Logout</a>
+            {% else %}
+                <p class="log-io">You're not currently logged in. </p>
+                <a class="log-io" href="/login">Login</a>
+                <p class="log-io"> or </p>
+                <a class="log-io" href="/signup">Register</a>
+                <p class="log-io"> to Post, Comment on, or Like content.</p>
+            {% endif %}
         <hr>
         <hr>
-        <form class="view-post" action="/login">
+        <br>
+        <!-- <form class="nav4blog" action="/login">
             <input type="submit" value="Login">
         </form>
-        <form class="view-post" action="/logout">
+        <form class="nav4blog" action="/logout">
             <input type="submit" value="Logout">
         </form>
-        <form class="view-post" action="/signup">
+        <form class="nav4blog" action="/signup">
             <input type="submit" value="Register">
-        </form>
-        <form class="view-post" action="/blog/newpost">
+        </form> -->
+        <form class="nav4blog" action="/blog/newpost">
             <input type="submit" value="Create New Post">
         </form>
-        <br>
         <br>
             {% for post in posts %}
                 <br>
                 <br>
                 <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
-                <div class="poster">By: {{post.name}}</div>
                 <hr>
                 <div class="post-subject">
                     <a class="title-link" href="/blog/{{post.key().id()}}">
@@ -55,17 +81,17 @@
                 <!-- <hr> -->
                 <div class="post-content">{{post.content}}</div>
                 <br>
+                <div class="poster">By: {{post.name}}</div>
                 <form class="view-post" action="/blog/{{post.key().id()}}">
                     <input type="submit" value="View Post">
                 </form>
-                <div class="post-content">Poster-Name: {{post.name}}</div>
+                <!-- <div class="post-content">Poster-Name: {{post.name}}</div>
                 <div class="post-content">Poster-ID: {{post.creator}}</div>
                 <div class="post-content">Post-ID: {{post.key().id()}}</div>
-                <div class="post-content">Post-Key: {{post.key()}}</div>
+                <div class="post-content">Post-Key: {{post.key()}}</div> -->
                 <!-- <button type="button" name="view">View Post</button> -->
 
-                <br>
-                <br>
+
                 <br>
             {% endfor %}
     </body>

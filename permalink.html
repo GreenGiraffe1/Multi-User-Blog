@@ -21,13 +21,16 @@
         <div class="post-content">{{post.content}}</div>
         <div class="post-likes">Likes: {{count}}</div>
             {% if current_user == post.creator %}
-                <form class="view-post" action="/blog">
+                <!-- <form class="view-post" action="/blog">
                     <input type="submit" value="edit (n/a yet)">
+                </form> -->
+                <form class="post-manip" method="post">
+                    <button type="submit" name="edit_p" value="{{post.key()}}">Edit</button>
                 </form>
                 <!-- <form class="view-post" action="/blog">
                     <input type="submit" value="delete (n/a yet)">
                 </form> -->
-                <form class="edit-post" method="post">
+                <form class="post-manip" method="post">
                     <button type="submit" name="delete_p" value="{{post.key()}}">Delete</button>
                 </form>
             {% elif current_user != post.creator and display == 'like' %}
@@ -54,7 +57,6 @@
                 </form>
 
             {% endif %}
-        <br>
         <form class="comment" method="post">
 
 
@@ -71,26 +73,24 @@
             <button type="submit" name="button">Submit</button>
         </form>
         <br>
-        <br>
         <h3>Comments:</h3>
             {% for cm in comments %}
                 <!--This is where the trouble is -->
                 {% if cm.post_id == cur_post_id and not cm.mod %}
-                <br>
                 <div class="comment-content">{{cm.content}}</div>
                 <div class="comment-author">By: {{cm.name}}</div>
-                Posted to: {{cm.post_id}}
-                <br>
-                Current: {{cur_post_id}}
-                <br>
+                <!-- Posted to: {{cm.post_id}} -->
+                <!-- <br> -->
+                <!-- Current: {{cur_post_id}} -->
+                <!-- <br> -->
                     {% if current_user == cm.creator and not cm.mod %}
                         <!-- <form class="view-post" method="post">
                             <input type="submit" name="edit_c" value="Edit">
                         </form> -->
-                        <form class="edit" method="post">
+                        <form class="com_manip" method="post">
                             <button type="submit" name="edit_c" value="{{cm.key()}}">Edit</button>
                         </form>
-                        <form class="edit" method="post">
+                        <form class="com_manip" method="post">
                             <button type="submit" name="delete_c" value="{{cm.key()}}">Delete</button>
                         </form>
                         <!-- <form class="view-post" action="/blog">

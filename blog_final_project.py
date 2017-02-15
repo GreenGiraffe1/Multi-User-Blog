@@ -121,9 +121,28 @@ class Handler(webapp2.RequestHandler):
 
     # def initialize(self, *a, **k):
     #     webapp2.RequestHandler.initialize(self, *a, **k)
-    #     uid = self.read_secure_cookie('user')
+    #     uid = self.read_secure_cookie('user_id').split('|')[0]
     #     if uid:
-    #         self.user = uid
+    #         self.uid = uid
+    #     uname = self.read_secure_cookie('user').split('|')[0]
+    #     if uname:
+    #         self.uname = uname
+
+    def identify(self):
+        if self.read_secure_cookie('user'):
+            uname = self.read_secure_cookie('user').split('|')[0]
+        else:
+            uname = None
+        return uname
+
+
+        # if self.read_secure_cookie('user_id'):
+        #     uid = self.read_secure_cookie('user_id').split('|')[0]
+        # else:
+        #     uid = None
+
+    # = usn.split('|')[0])
+
 
 
 
@@ -268,7 +287,7 @@ class Logout(Handler):
 
 class MainPage(Handler):
     def get(self):
-        self.redirect("/signup")
+        self.redirect("/blog")
 
 ########  TODO:  Add BLOG Functionality Here     #######
 
@@ -305,7 +324,7 @@ class NewPost(Handler):
             creator = creator1.split('|')[0]
             p = Post(subject=subject, content=content, creator=creator, name=name)
             p.put()
-            self.write("This worked - now you need to create a redirect.")
+            # self.write("This worked - now you need to create a redirect.")
             self.redirect("/blog/%s" % str(p.key().id()))
 
         elif not self.read_secure_cookie('user'):
@@ -320,7 +339,9 @@ class NewPost(Handler):
 class Blog(Handler):
     def render_fpage(self):
         posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")
-        self.render("blog.html", posts=posts)
+        # self.initialize()
+        # self.identify()
+        self.render("blog.html", posts=posts, uname=self.identify())
 
     def get(self):
         self.render_fpage()
@@ -352,7 +373,7 @@ class PostPage(Handler):
             current_user = (self.request.cookies.get('user_id')).split('|')[0]
         else:
             current_user = None
-            self.redirect("/signup")
+            # self.redirect("/signup")
 
         if not post:
             self.error(404)
@@ -377,6 +398,7 @@ class PostPage(Handler):
 
     def post(self, post_id):
         delete_post = False
+        edit_post = False
         key = db.Key.from_path("Post", int(post_id))  # COPIED verbatim from above - think I need it here, but not sure.
         post = db.get(key)
         comment = self.request.get("comment")
@@ -464,7 +486,9 @@ class PostPage(Handler):
             delete_post = True
             sleep(.2)
 
-
+        if self.request.get("edit_p"):
+            epk = self.request.get("edit_p")
+            edit_post = True
 
 
         if comment:
@@ -473,13 +497,45 @@ class PostPage(Handler):
             sleep(.2)
         # self.redirect("/blog/%s" % str(p.key().id()))
 
+
+
         if delete_post:
             self.redirect("/blog")
+        elif edit_post:
+            self.redirect("/blog/edit/%s" % str(post_id))
         else:
             self.redirect("/blog/%s" % str(post_id))
 
 
 
+# key = db.Key.from_path("Post", int(post_id))  # COPIED verbatim from above - think I need it here, but not sure.
+# post = db.get(key)
+
+
+class EditPage(Handler):
+    def get(self, post_id):
+        key = db.Key.from_path("Post", int(post_id))
+        post = db.get(key)
+        # posts = db.GqlQuery("SELECT * FROM Post")
+        self.render("edit.html", post=post)
+
+    def post(self, post_id):
+        key = db.Key.from_path("Post", int(post_id))
+        post = db.get(key)
+
+        update_p_text = self.request.get("post_update")
+
+
+        # if self.request.get("cancel"):
+
+
+        if update_p_text:
+            post.content = update_p_text
+            post.put()
+            sleep(.2)
+            # self.redirect("/blog/")
+
+        self.redirect("/blog/%s" % str(post_id))
 
 
 
@@ -520,7 +576,7 @@ class Tester(Handler):
         if subject and email:  # and self.read_secure_cookie('user'):
             e = Email(subject=subject, email=email, creator=creator, name=name)
             e.put()
-            sleep(1)
+            sleep(.2)
             self.redirect("/tester")
 
         # emails = db.GqlQuery("SELECT * FROM Email ORDER BY created DESC LIMIT 10")
@@ -542,6 +598,7 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ("/blog", Blog),
                                ("/blog/newpost", NewPost),
                                ("/blog/([0-9]+)", PostPage),
+                               ("/blog/edit/([0-9]+)", EditPage),
                                ("/tester", Tester),
                                 ],
                                 debug=True)

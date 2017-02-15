@@ -222,14 +222,16 @@ class Signup(Handler):
             # passer = str(c.key().id())
             # global passer
             # passer = c
-            self.redirect("/welcome")
-
+            # self.redirect("/welcome")
+            self.redirect("/blog")
 
 class WelcomeHandler(Handler):
     def get(self):
         usn = self.request.cookies.get('user')
         if check_secure_val(usn):
             self.render("welcome.html", username = usn.split('|')[0])#, credentials=credentials)
+            # sleep(7)
+            # self.redirect("/blog")
         else:
             self.redirect('/logout')
 
@@ -270,8 +272,8 @@ class Login(Handler):
                 self.login(u)
 
                 proceed = True
-                self.redirect("/welcome")
-
+                # self.redirect("/welcome")
+                self.redirect("/blog")
 
         if not proceed:
             self.render('login.html', error_login='Login Invalid')

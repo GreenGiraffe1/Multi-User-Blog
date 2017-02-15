@@ -241,10 +241,11 @@ class WelcomeHandler(Handler):
 class Login(Handler):
     def get(self):
         uname = self.identify()
-        self.render('login.html')
+        self.render('login.html', uname=uname)
 
 
     def post(self):
+        uname = self.identify()
         username = self.request.get('username')
         password = self.request.get('password')
         proceed = False
@@ -279,7 +280,7 @@ class Login(Handler):
                 self.redirect("/blog")
 
         if not proceed:
-            self.render('login.html', error_login='Login Invalid')
+            self.render('login.html', error_login='Login Invalid', uname=uname)
 
 
 class Logout(Handler):
@@ -551,7 +552,7 @@ class EditPage(Handler):
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         # posts = db.GqlQuery("SELECT * FROM Post")
-        self.render("edit.html", post=post)
+        self.render("edit.html", post=post, uname=uname)
 
     def post(self, post_id):
         key = db.Key.from_path("Post", int(post_id))

@@ -408,7 +408,7 @@ class PostPage(Handler):
 
         self.query = Comment.all().order('-created')
 
-        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id, count=count, likez=likez, display=display)#, dkey_vis=dkey_vis)#comments)
+        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id, count=count, likez=likez, display=display, uname=uname)#, dkey_vis=dkey_vis)#comments)
 
 
     def post(self, post_id):

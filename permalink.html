@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -9,9 +9,12 @@
     <body>
         <h1>Last Post</h1>
         <hr>
-        <hr>
-        <br>
-        <br>
+        <hr> -->
+        {% extends "base.html" %}
+
+        {% block content %}
+        <!-- <br> -->
+        <!-- <br> -->
         <br>
         <!-- <div class="date-created">{{post.created}}</div> -->
         <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
@@ -68,7 +71,7 @@
             <label>
                 Leave a Comment:
                 <br>
-                <textarea name="comment" rows="8" cols="80"></textarea>
+                <textarea name="comment" rows="6" cols="60"></textarea>
             </label>
             <br>
             <button type="submit" name="button">Submit</button>
@@ -113,7 +116,8 @@
         <br>
         <br>
         <br>
-
+        {% endblock %}
+<!--
 
     </body>
-</html>
+</html> -->

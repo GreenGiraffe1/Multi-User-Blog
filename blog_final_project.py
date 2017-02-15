@@ -168,6 +168,7 @@ class Post(db.Model):
 class Signup(Handler):
     def get(self):
         self.render("register.html")
+        uname = self.identify()
 
 
     def post(self):
@@ -239,7 +240,9 @@ class WelcomeHandler(Handler):
 
 class Login(Handler):
     def get(self):
+        uname = self.identify()
         self.render('login.html')
+
 
     def post(self):
         username = self.request.get('username')
@@ -295,6 +298,7 @@ class MainPage(Handler):
 
 class NewPost(Handler):
     def render_newpost(self,subject="",content="", error=""):
+        uname = self.identify()
         self.render("newpost.html",subject=subject, content=content,error=error)
 
     def get(self):
@@ -379,6 +383,7 @@ class PostPage(Handler):
     def get(self, post_id):
         key = db.Key.from_path("Post", int(post_id))  # WOW - This is Awesome!!  I will use this code in the Future! *****
         post = db.get(key)
+        uname = self.identify()
         if self.read_secure_cookie('user_id'):
             current_user = (self.request.cookies.get('user_id')).split('|')[0]
         else:
@@ -542,6 +547,7 @@ class PostPage(Handler):
 
 class EditPage(Handler):
     def get(self, post_id):
+        uname = self.identify()
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         # posts = db.GqlQuery("SELECT * FROM Post")

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <html lang="en-US">
+        <title>Main Blog Page</title>
+        <style media="screen">
+            body {
+                margin: 0 auto;
+                max-width: 800px;
+            }
+            h1 {
+                text-align: center;
+            }
+            .post-subject {
+                font-size: 20px;
+                font-weight: bold;
+                /*color: black;*/
+            }
+            .title-link {
+                color: black;
+            }
+            .nav4blog {
+                display: inline;
+                /*flex-wrap: nowrap;*/
+            }
+            .log-io {
+                display: inline;
+            }
+            .blog-title-link {
+                text-decoration: none;
+                color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- <h1>FS-ND Blog</h1>
+        <br> -->
+        <h1><a class="blog-title-link" href="/blog">Matt's Blog</a></h1>
+        <!-- <br>
+        <a class="blog-link" href="/blog">
+            <h1>FS-ND Blog</h1>
+        </a> -->
+        <br>
+            {% if uname %}
+                <p class="log-io">You're currently logged in as: {{uname}}</p>
+                <a class="log-io" href="/logout">Logout</a>
+            {% else %}
+                <p class="log-io">You're not currently logged in. </p>
+                <a class="log-io" href="/login">Login</a>
+                <p class="log-io"> or </p>
+                <a class="log-io" href="/signup">Register</a>
+                <p class="log-io"> to Post, Comment on, or Like content.</p>
+            {% endif %}
+        <hr>
+        <hr>
+        <br>
+        <div id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

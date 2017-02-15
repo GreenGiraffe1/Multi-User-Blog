@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -12,8 +12,13 @@
     <body>
         <h2 class="headline">HW4 Registration</h2>
         <hr>
-        <br>
-        <br>
+        <br> -->
+        {% extends "base.html" %}
+
+        {% block content %}
+        <!-- <br> -->
+        <h2>Register:</h2>
+        <!-- <br> -->
         <form method="post">
             <label>
                 Username:
@@ -50,5 +55,6 @@
             <br>
             <button>Submit</button>
         </form>
-    </body>
-</html>
+        {% endblock %}
+    <!-- </body>
+</html> -->

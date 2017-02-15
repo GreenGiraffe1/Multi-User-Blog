@@ -167,8 +167,8 @@ class Post(db.Model):
 
 class Signup(Handler):
     def get(self):
-        self.render("register.html")
         uname = self.identify()
+        self.render("register.html", uname=uname)
 
 
     def post(self):
@@ -181,7 +181,7 @@ class Signup(Handler):
 
         #### New Logic - with Dictionary Error Handling
         params = dict(username = username,
-                      email = email)
+                      email = email, uname=uname)
 
         have_error = False
 

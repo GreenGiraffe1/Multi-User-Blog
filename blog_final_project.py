@@ -339,12 +339,20 @@ class NewPost(Handler):
 class Blog(Handler):
     def render_fpage(self):
         posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")
+        uname = self.identify()
         # self.initialize()
         # self.identify()
-        self.render("blog.html", posts=posts, uname=self.identify())
+        self.render("blog.html", posts=posts, uname=uname)
 
     def get(self):
         self.render_fpage()
+
+    def post(self):
+        uname=self.identify()
+        if self.request.get("create-post") and uname:
+            self.redirect("/blog/newpost")
+        elif self.request.get("create-post") and not uname:
+            self.redirect("/login")
 
 
 class Comment(db.Model):
@@ -426,7 +434,7 @@ class PostPage(Handler):
         elif self.request.get("like1") and not uname:
             # params['error_like'] = "You must be logged in to Like posts."
             have_error = True
-            self.redirect("/login")
+            # self.redirect("/login")
 
         if self.request.get("unlike"):
             likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
@@ -503,10 +511,13 @@ class PostPage(Handler):
             edit_post = True
 
 
-        if comment:
+        if comment and uname:
             c = Comment(content=comment, name=current_name, creator=current_user, post_id=post_id)
             c.put()
             sleep(.2)
+        elif comment and not uname:
+            have_error = True
+
         # self.redirect("/blog/%s" % str(p.key().id()))
 
 

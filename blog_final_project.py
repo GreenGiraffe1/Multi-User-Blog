@@ -141,7 +141,6 @@ class Signup(Handler):
         params = dict(username = username,
                       email = email, uname=uname)
         have_error = False
-
         if not valid_username(username):
             params['error_username'] = "That's not a valid username."
             have_error = True
@@ -155,7 +154,6 @@ class Signup(Handler):
             if not valid_email(email):
                 params['error_email'] = "That's not a valid email."
                 have_error = True
-
         # check here if the username is already in the database - if so - throw an error - make them Pick a new username
         credentials = db.GqlQuery("SELECT * FROM Credential")
         for cr in credentials:

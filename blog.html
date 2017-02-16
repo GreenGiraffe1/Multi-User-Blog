@@ -72,7 +72,7 @@
                     </a>
                 </div>
                 <!-- <hr> -->
-                <div class="post-content">{{post.content | safe}}</div>
+                <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
                 <br>
                 <div class="poster">By: {{post.name}}</div>
                 <form class="view-post" action="/blog/{{post.key().id()}}">

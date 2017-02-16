@@ -21,7 +21,7 @@
         <div class="poster">By: {{post.name}}</div>
         <hr>
         <div class="post-subject"><b>{{post.subject | safe}}</b></div>
-        <div class="post-content">{{post.content | safe}}</div>
+        <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
         <div class="post-likes">Likes: {{count}}</div>
             {% if current_user == post.creator %}
                 <!-- <form class="view-post" action="/blog">
@@ -60,7 +60,7 @@
                 </form>
 
             {% endif %}
-        {{error_like}}
+        <!-- {{error_like}} -->
         <form class="comment" method="post">
 
 
@@ -81,7 +81,7 @@
             {% for cm in comments %}
                 <!--This is where the trouble is -->
                 {% if cm.post_id == cur_post_id and not cm.mod %}
-                <div class="comment-content">{{cm.content | safe}}</div>
+                <div class="comment-content">{{cm.content.replace('\n', '<br>') | safe}}</div>
                 <div class="comment-author">By: {{cm.name}}</div>
                 <!-- Posted to: {{cm.post_id}} -->
                 <!-- <br> -->
@@ -112,6 +112,7 @@
                     </form>
                 <br>
                 {% endif %}
+                <br><br>
             {% endfor %}
         <br>
         <br>

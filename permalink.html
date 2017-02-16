@@ -17,6 +17,7 @@
         <!-- <br> -->
         <br>
         <br>
+        <br>
         <!-- <div class="date-created">{{post.created}}</div> -->
         <div class="container">
             <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
@@ -75,7 +76,7 @@
             <label>
                 Leave a Comment:
                 <br>
-                <textarea name="comment" rows="6" cols="60"></textarea>
+                <textarea name="comment" rows="5" cols="50"></textarea>
             </label>
             <br>
             <button type="submit" name="button">Submit</button>
@@ -85,6 +86,8 @@
             {% for cm in comments %}
                 <!--This is where the trouble is -->
                 {% if cm.post_id == cur_post_id and not cm.mod %}
+
+                <div class="comment-date">{{cm.created.strftime("%-m/%d/%y")}}</div>
                 <div class="comment-content">{{cm.content.replace('\n', '<br>') | safe}}</div>
                 <div class="comment-author">By: {{cm.name}}</div>
                 <!-- Posted to: {{cm.post_id}} -->
@@ -109,14 +112,14 @@
                     <form class="comment-edit" method="post">
                         Edit Your Comment:
                         <br>
-                        <textarea name="updated_comment" rows="6" cols="60">{{cm.content}}</textarea>
+                        <textarea name="updated_comment" rows="5" cols="50">{{cm.content}}</textarea>
                         <br>
                         <button type="submit" name="update_c" value="{{cm.key()}}">Save</button>
                         <button type="submit" action="/blog/{{cm.key().id()}}" name="cancel_u_c" value="{{cm.key()}}">Cancel</button>
                     </form>
                 <br>
                 {% endif %}
-                <br><br>
+                <br><br><br>
             {% endfor %}
         <br>
         <br>

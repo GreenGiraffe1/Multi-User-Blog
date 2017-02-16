@@ -163,6 +163,10 @@ class Post(db.Model):
     creator = db.StringProperty(required = False)
     name = db.StringProperty(required = False)
 
+    # def render(self):
+    #     self._render_text = self.content.replace('\n', '<br>')
+    #     return render_str("post.html", p=self)
+
 
 
 class Signup(Handler):
@@ -553,7 +557,7 @@ class EditPage(Handler):
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         # posts = db.GqlQuery("SELECT * FROM Post")
-        self.render("edit.html", post=post, uname=uname)
+        self.render("edit.html", post=post, uname=uname, display='NoShow')
 
     def post(self, post_id):
         key = db.Key.from_path("Post", int(post_id))

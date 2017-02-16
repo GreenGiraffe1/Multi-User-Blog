@@ -68,11 +68,11 @@
                 <hr>
                 <div class="post-subject">
                     <a class="title-link" href="/blog/{{post.key().id()}}">
-                        {{post.subject}}
+                        {{post.subject | safe}}
                     </a>
                 </div>
                 <!-- <hr> -->
-                <div class="post-content">{{post.content}}</div>
+                <div class="post-content">{{post.content | safe}}</div>
                 <br>
                 <div class="poster">By: {{post.name}}</div>
                 <form class="view-post" action="/blog/{{post.key().id()}}">

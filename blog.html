@@ -64,7 +64,8 @@
             {% for post in posts %}
                 <br>
                 <br>
-                <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
+                <div class="post-header date-created">{{post.created.strftime("%b %d, %Y")}}</div>
+                <!-- <div class="post-header poster">By: {{post.name}}</div> -->
                 <hr>
                 <div class="post-subject">
                     <a class="title-link" href="/blog/{{post.key().id()}}">
@@ -72,7 +73,7 @@
                     </a>
                 </div>
                 <!-- <hr> -->
-                <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
+                <div class="post-content">{{post.content[:400] | safe}}...</div>
                 <br>
                 <div class="poster">By: {{post.name}}</div>
                 <form class="view-post" action="/blog/{{post.key().id()}}">

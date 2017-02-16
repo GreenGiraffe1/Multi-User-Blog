@@ -12,12 +12,12 @@ import jinja2
 from google.appengine.ext import db
 
 
-template_dir = os.path.join(os.path.dirname(__file__))#, 'templates') - I chose not to create a template directory for ease of use while learning.
+template_dir = os.path.join(os.path.dirname(__file__))#, "templates") - I chose not to create a template directory for ease of use while learning.
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = True)
 
 
-SECRET = 'LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR'  # "salt" for the secure cookie (normally this would be held in another secure module)
+SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"  # "salt" for the secure cookie (normally this would be held in another secure module)
 
 
 # username verification - using REGEX
@@ -49,30 +49,30 @@ def make_secure_val(s):
 
 def check_secure_val(h):
     if h:
-        val = h.split('|')[0]
+        val = h.split("|")[0]
         if h == make_secure_val(val):
             return val
 
 
 ## Password Hashing / Manipulation
 def make_salt(length = 5):
-    return ''.join(random.choice(letters) for x in xrange(length))
+    return "".join(random.choice(letters) for x in xrange(length))
 
 
 def make_pw_hash(name, pw, salt = None):
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(name + pw + salt).hexdigest()
-    return '%s|%s' % (salt,h)
+    return "%s|%s" % (salt,h)
 
 
 def valid_pw(name, password, h):
-    salt = h.split('|')[0]
+    salt = h.split("|")[0]
     return h == make_pw_hash(name, password, salt)
 
 
 def pwhasher(pw):
-    return hmac.new('salt',pw).hexdigest()
+    return hmac.new("salt",pw).hexdigest()
 
 
 class Handler(webapp2.RequestHandler):
@@ -89,22 +89,22 @@ class Handler(webapp2.RequestHandler):
 
     def set_secure_cookie(self, name, val):
         cookie_val = make_secure_val(val)
-        self.response.headers.add_header('Set-Cookie',
-                        '%s=%s; Path=/' % (name, cookie_val))
+        self.response.headers.add_header("Set-Cookie",
+                        "%s=%s; Path=/" % (name, cookie_val))
 
     def read_secure_cookie(self, name):
         cookie_val = self.request.cookies.get(name)
         return cookie_val and check_secure_val(cookie_val)
 
     def login(self, user):
-        self.set_secure_cookie('user_id', str(user.key().id()))
+        self.set_secure_cookie("user_id", str(user.key().id()))
 
     def logout(self):
-        self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
+        self.response.headers.add_header("Set-Cookie", "user_id=; Path=/")
 
     def identify(self):
-        if self.read_secure_cookie('user'):
-            uname = self.read_secure_cookie('user').split('|')[0]
+        if self.read_secure_cookie("user"):
+            uname = self.read_secure_cookie("user").split("|")[0]
         else:
             uname = None
         return uname
@@ -133,41 +133,41 @@ class Signup(Handler):
 
     def post(self):
         uname = self.identify()
-        username = self.request.get('username')
-        password = self.request.get('password')
-        verify = self.request.get('verify')
-        email = self.request.get('email')
+        username = self.request.get("username")
+        password = self.request.get("password")
+        verify = self.request.get("verify")
+        email = self.request.get("email")
         #### New Logic - with Dictionary Error Handling
         params = dict(username = username,
                       email = email, uname=uname)
         have_error = False
         if not valid_username(username):
-            params['error_username'] = "That's not a valid username."
+            params["error_username"] = "That's not a valid username."
             have_error = True
         if not valid_password(password):
-            params['error_password'] = "That wasn't a valid password."
+            params["error_password"] = "That wasn't a valid password."
             have_error = True
         elif password != verify:
-            params['error_verify'] = "Your passwords didn't match."
+            params["error_verify"] = "Your passwords didn't match."
             have_error = True
         if email:
             if not valid_email(email):
-                params['error_email'] = "That's not a valid email."
+                params["error_email"] = "That's not a valid email."
                 have_error = True
         # check here if the username is already in the database - if so - throw an error - make them Pick a new username
         credentials = db.GqlQuery("SELECT * FROM Credential")
         for cr in credentials:
             if cr.username == username:
-                params['error_username'] = ("That username already exists. "
+                params["error_username"] = ("That username already exists. "
                                             "Choose another and try again.")
                 have_error = True
         if have_error:
-            self.render('register.html', **params)
+            self.render("register.html", **params)
         else:
             c = Credential(username=username, email=email,
                            hashed_password=make_pw_hash(username, verify))
             c.put()
-            self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/'
+            self.response.headers.add_header("Set-Cookie", "user=%s; Path=/"
                                              % str(make_secure_val(username)))
             self.login(c)
             self.redirect("/blog")
@@ -176,36 +176,36 @@ class Signup(Handler):
 class WelcomeHandler(Handler):
 
     def get(self):
-        usn = self.request.cookies.get('user')
+        usn = self.request.cookies.get("user")
         if check_secure_val(usn):
-            self.render("welcome.html", username = usn.split('|')[0])
+            self.render("welcome.html", username = usn.split("|")[0])
         else:
-            self.redirect('/logout')
+            self.redirect("/logout")
 
 
 class Login(Handler):
 
     def get(self):
         uname = self.identify()
-        self.render('login.html', uname=uname)
+        self.render("login.html", uname=uname)
 
     def post(self):
         uname = self.identify()
-        username = self.request.get('username')
-        password = self.request.get('password')
+        username = self.request.get("username")
+        password = self.request.get("password")
         proceed = False
         self.query = Credential.all()
         for self.credential in self.query:
             if self.credential.username == username and valid_pw(username,
                         password, self.credential.hashed_password):
-                self.response.headers.add_header('Set-Cookie',
-                        'user=%s; Path=/' % str(make_secure_val(username)))
+                self.response.headers.add_header("Set-Cookie",
+                        "user=%s; Path=/" % str(make_secure_val(username)))
                 u = self.credential
                 self.login(u)
                 proceed = True
                 self.redirect("/blog")
         if not proceed:
-            self.render('login.html', error_login='Login Invalid',
+            self.render("login.html", error_login="Login Invalid",
                         uname=uname)
 
 
@@ -213,9 +213,9 @@ class Logout(Handler):
 
     def get(self):
         # delete cookie
-        usn = self.request.cookies.get('user')  # TODO: Remove this once I confirm it isn't necessary. (getting the user cookie before deleting it)
-        self.response.headers.add_header('Set-Cookie',
-                                         'user=%s; Path=/' % (''))
+        usn = self.request.cookies.get("user")  # TODO: Remove this once I confirm it isn"t necessary. (getting the user cookie before deleting it)
+        self.response.headers.add_header("Set-Cookie",
+                                         "user=%s; Path=/" % (""))
         self.logout()
         self.redirect("/signup")
 
@@ -239,18 +239,18 @@ class NewPost(Handler):
     def post(self):
         subject = self.request.get("subject")
         content = self.request.get("content")
-        if (subject and content and self.read_secure_cookie('user')
-                        and self.read_secure_cookie('user_id')):
-            name1 = self.request.cookies.get('user')
-            name = name1.split('|')[0]
-            creator1 = self.request.cookies.get('user_id')
-            creator = creator1.split('|')[0]
+        if (subject and content and self.read_secure_cookie("user")
+                        and self.read_secure_cookie("user_id")):
+            name1 = self.request.cookies.get("user")
+            name = name1.split("|")[0]
+            creator1 = self.request.cookies.get("user_id")
+            creator = creator1.split("|")[0]
             p = Post(subject=subject, content=content, creator=creator,
                      name=name)
             p.put()
             self.redirect("/blog/%s" % str(p.key().id()))
-        elif not self.read_secure_cookie('user'):
-            error = 'You must be logged in to create a new post.'
+        elif not self.read_secure_cookie("user"):
+            error = "You must be logged in to create a new post."
             self.render_newpost(subject,content,error)
         else:
             error = ("You need to enter both a Subject and Content to create "
@@ -261,8 +261,8 @@ class NewPost(Handler):
 class Blog(Handler):
 
     def render_fpage(self):
-        # posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")  # Only delete this, if I'm REALLY sure it's all working
-        posts = Post.all().order('-created').fetch(limit=10)
+        # posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")  # Only delete this, if I"m REALLY sure it"s all working
+        posts = Post.all().order("-created").fetch(limit=10)
         uname = self.identify()
         self.render("blog.html", posts=posts, uname=uname)
 
@@ -302,8 +302,8 @@ class PostPage(Handler):
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         uname = self.identify()
-        if self.read_secure_cookie('user_id'):
-            current_user = (self.request.cookies.get('user_id')).split('|')[0]
+        if self.read_secure_cookie("user_id"):
+            current_user = (self.request.cookies.get("user_id")).split("|")[0]
         else:
             current_user = None
         if not post:
@@ -314,12 +314,12 @@ class PostPage(Handler):
         for likey in likez:
             if likey.does_like and likey.post_id == post_id: # Second condition is if the ID matches..
                 count = count + 1
-        display = 'like'
+        display = "like"
         for li in likez:
             if (li.post_id == post_id and li.creator == current_user
                             and li.does_like):
-                display = 'unlike'
-        self.query = Comment.all().order('-created')
+                display = "unlike"
+        self.query = Comment.all().order("-created")
         self.render("permalink.html", post=post, current_user=current_user,
                     comments=self.query, cur_post_id=post_id, count=count,
                     likez=likez, display=display, uname=uname)
@@ -332,9 +332,9 @@ class PostPage(Handler):
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         comment = self.request.get("comment")
-        if self.read_secure_cookie('user_id'):
-            current_user = (self.request.cookies.get('user_id')).split('|')[0]
-            current_name = (self.request.cookies.get('user')).split('|')[0]
+        if self.read_secure_cookie("user_id"):
+            current_user = (self.request.cookies.get("user_id")).split("|")[0]
+            current_name = (self.request.cookies.get("user")).split("|")[0]
         else:
             current_user = None
             current_name = None
@@ -411,7 +411,7 @@ class EditPage(Handler):
         uname = self.identify()
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
-        self.render("edit.html", post=post, uname=uname, display='NoShow')
+        self.render("edit.html", post=post, uname=uname, display="NoShow")
 
     def post(self, post_id):
         key = db.Key.from_path("Post", int(post_id))
@@ -424,11 +424,11 @@ class EditPage(Handler):
         self.redirect("/blog/%s" % str(post_id))
 
 
-app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/welcome',WelcomeHandler),
-                               ('/signup', Signup),
-                               ('/login', Login),
-                               ('/logout', Logout),
+app = webapp2.WSGIApplication([("/", MainPage),
+                               ("/welcome",WelcomeHandler),
+                               ("/signup", Signup),
+                               ("/login", Login),
+                               ("/logout", Logout),
                                ("/blog", Blog),
                                ("/blog/newpost", NewPost),
                                ("/blog/([0-9]+)", PostPage),

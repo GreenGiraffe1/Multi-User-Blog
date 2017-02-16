@@ -180,7 +180,7 @@ class WelcomeHandler(Handler):
         if check_secure_val(usn):
             self.render("welcome.html", username = usn.split("|")[0])
         else:
-            self.redirect("/logout")
+            self.redirect("/blog/logout")
 
 
 class Login(Handler):
@@ -217,7 +217,7 @@ class Logout(Handler):
         self.response.headers.add_header("Set-Cookie",
                                          "user=%s; Path=/" % (""))
         self.logout()
-        self.redirect("/signup")
+        self.redirect("/blog/signup")
 
 
 class MainPage(Handler):
@@ -274,7 +274,7 @@ class Blog(Handler):
         if self.request.get("create-post") and uname:
             self.redirect("/blog/newpost")
         elif self.request.get("create-post") and not uname:
-            self.redirect("/login")
+            self.redirect("/blog/login")
 
 
 class Comment(db.Model):
@@ -400,7 +400,7 @@ class PostPage(Handler):
         elif edit_post:
             self.redirect("/blog/edit/%s" % str(post_id))
         elif have_error:
-            self.redirect("/login")
+            self.redirect("/blog/login")
         else:
             self.redirect("/blog/%s" % str(post_id))
 
@@ -425,10 +425,10 @@ class EditPage(Handler):
 
 
 app = webapp2.WSGIApplication([("/", MainPage),
-                               ("/welcome",WelcomeHandler),
-                               ("/signup", Signup),
-                               ("/login", Login),
-                               ("/logout", Logout),
+                               ("/blog/welcome",WelcomeHandler),
+                               ("/blog/signup", Signup),
+                               ("/blog/login", Login),
+                               ("/blog/logout", Logout),
                                ("/blog", Blog),
                                ("/blog/newpost", NewPost),
                                ("/blog/([0-9]+)", PostPage),

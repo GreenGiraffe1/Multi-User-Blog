@@ -172,6 +172,7 @@ class Signup(Handler):
 
 
     def post(self):
+        uname = self.identify()
         username = self.request.get('username')
         password = self.request.get('password')
         verify = self.request.get('verify')

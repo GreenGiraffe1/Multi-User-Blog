@@ -7,24 +7,17 @@ from string import letters
 import random
 from time import sleep
 
-
 import webapp2
 import jinja2
-
-
-
-
-SECRET = 'LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR'  # "salt" for the secure cookie (normally this would be held in another secure module)
-
-
 from google.appengine.ext import db
-# from google.appengine.api import users  # I think this is only if I want people to login through their Google accounts
 
 
 template_dir = os.path.join(os.path.dirname(__file__))#, 'templates') - I chose not to create a template directory for ease of use while learning.
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = True)
 
+
+SECRET = 'LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR'  # "salt" for the secure cookie (normally this would be held in another secure module)
 
 
 #  REGEX - to verify user registration input
@@ -44,32 +37,20 @@ EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
 def valid_email(email):
     return EMAIL_RE.match(email)
 
-
-
-
-
-
-
 def hash_str(s):
-    # return hashlib.md5(s).hexdigest()
     return hmac.new(SECRET,s).hexdigest()
 
 # returns a string of the format: s,HASH
 def make_secure_val(s):
-    # output = s + "," + hash_str(s)
-    # return output
     return "%s|%s" % (s, hash_str(s))
 
 def check_secure_val(h):
-    # string,hashstr = h.split(',')
     if h:
         val = h.split('|')[0]
         if h == make_secure_val(val):
             return val
 
-
-
-## Password Hashing / Manipulation - this is new & it is untested
+## Password Hashing / Manipulation
 def make_salt(length = 5):
     return ''.join(random.choice(letters) for x in xrange(length))
 
@@ -83,12 +64,8 @@ def valid_pw(name, password, h):
     salt = h.split('|')[0]
     return h == make_pw_hash(name, password, salt)
 
-
-
 def pwhasher(pw):
     return hmac.new('salt',pw).hexdigest()
-
-
 
 
 class Handler(webapp2.RequestHandler):
@@ -102,7 +79,6 @@ class Handler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
-    ### Alert - these 2 should work, but I haven't put them in my code yet.
     def set_secure_cookie(self, name, val):
         cookie_val = make_secure_val(val)
         self.response.headers.add_header('Set-Cookie', '%s=%s; Path=/' % (name, cookie_val))
@@ -111,22 +87,11 @@ class Handler(webapp2.RequestHandler):
         cookie_val = self.request.cookies.get(name)
         return cookie_val and check_secure_val(cookie_val)
 
-
-    ### Alert - these naming comventions don't match with the rest of mine, and aren't implemented, but do seem like they may be useful in the future
     def login(self, user):
         self.set_secure_cookie('user_id', str(user.key().id()))
 
     def logout(self):
         self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
-
-    # def initialize(self, *a, **k):
-    #     webapp2.RequestHandler.initialize(self, *a, **k)
-    #     uid = self.read_secure_cookie('user_id').split('|')[0]
-    #     if uid:
-    #         self.uid = uid
-    #     uname = self.read_secure_cookie('user').split('|')[0]
-    #     if uname:
-    #         self.uname = uname
 
     def identify(self):
         if self.read_secure_cookie('user'):
@@ -135,25 +100,10 @@ class Handler(webapp2.RequestHandler):
             uname = None
         return uname
 
-
-        # if self.read_secure_cookie('user_id'):
-        #     uid = self.read_secure_cookie('user_id').split('|')[0]
-        # else:
-        #     uid = None
-
-    # = usn.split('|')[0])
-
-
-
-
-
 class Credential(db.Model):
     username = db.StringProperty(required = True)
     email = db.StringProperty(required = False)
     hashed_password = db.TextProperty(required = True)
-
-
-
 
 class Post(db.Model):
     subject = db.StringProperty(required = True)
@@ -162,12 +112,6 @@ class Post(db.Model):
     last_modified = db.DateTimeProperty(auto_now = True)
     creator = db.StringProperty(required = False)
     name = db.StringProperty(required = False)
-
-    # def render(self):
-    #     self._render_text = self.content.replace('\n', '<br>')
-    #     return render_str("post.html", p=self)
-
-
 
 class Signup(Handler):
     def get(self):
@@ -211,24 +155,15 @@ class Signup(Handler):
         for cr in credentials:
             if cr.username == username:
                 params['error_username'] = "That username already exists. Choose another and try again."
-                # self.write("NOOO")
                 have_error = True
 
         if have_error:
             self.render('register.html', **params)
         else:
-            # c = Credential(username=username, email=email, hashed_password=pwhasher(verify))        #  TODO: Implement Secure Password Hashing
-            c = Credential(username=username, email=email, hashed_password=make_pw_hash(username, verify))        #  TODO: Do it Here!
+            c = Credential(username=username, email=email, hashed_password=make_pw_hash(username, verify))
             c.put()
-            # self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % (str(username)))  # Set a Cookie in App Engine
-                                                   # I think this should be: % make_secure_val(username))
             self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
             self.login(c)
-            # global passer
-            # passer = str(c.key().id())
-            # global passer
-            # passer = c
-            # self.redirect("/welcome")
             self.redirect("/blog")
 
 class WelcomeHandler(Handler):
@@ -236,57 +171,31 @@ class WelcomeHandler(Handler):
         usn = self.request.cookies.get('user')
         if check_secure_val(usn):
             self.render("welcome.html", username = usn.split('|')[0])#, credentials=credentials)
-            # sleep(7)
-            # self.redirect("/blog")
         else:
             self.redirect('/logout')
-
-
 
 class Login(Handler):
     def get(self):
         uname = self.identify()
         self.render('login.html', uname=uname)
 
-
     def post(self):
         uname = self.identify()
         username = self.request.get('username')
         password = self.request.get('password')
         proceed = False
-
-
-
-        # credentials = db.GqlQuery("SELECT * FROM Credential ORDER BY created")
-        #
-        # for cr in credentials:
-        #     if cr.username == username and valid_pw(username, password, cr.hashed_password):  # TODO: implement hashed_password Verification
-        #
-        #         # send to welcome screen, and set the cookie
-        #         self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
-        #         u = cr
-        #         self.login(u)
-        #
-        #         proceed = True
-        #         self.redirect("/welcome")
-
-
-
-        # Try alternate syntax, without using GQL:
         self.query = Credential.all()
         for self.credential in self.query:
             if self.credential.username == username and valid_pw(username, password, self.credential.hashed_password):
                 self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
                 u = self.credential  #.key().id()
                 self.login(u)
-
                 proceed = True
                 # self.redirect("/welcome")
                 self.redirect("/blog")
 
         if not proceed:
             self.render('login.html', error_login='Login Invalid', uname=uname)
-
 
 class Logout(Handler):
     def get(self):
@@ -300,32 +209,17 @@ class MainPage(Handler):
     def get(self):
         self.redirect("/blog")
 
-########  TODO:  Add BLOG Functionality Here     #######
-
 class NewPost(Handler):
     def render_newpost(self,subject="",content="", error=""):
         uname = self.identify()
         self.render("newpost.html",subject=subject, content=content,error=error)
 
     def get(self):
-        # if read_secure_cookie('user'):
-        #     self.render_newpost()
-        # else:
-        #     self.redirect()
-        # if not self.read_secure_cookie('user'):
-        #     self.redirect('/login', error_login='Must be Logged in to Post')
         self.render_newpost()
 
     def post(self):
-
         subject = self.request.get("subject")
         content = self.request.get("content")
-
-        # if not self.read_secure_cookie('user'):
-        #     error = 'Must be logged in to Post.'
-        #     self.render_newpost(subject,content,error)
-            # error = 'You must be logged in to create a new post.'
-            # self.render_newpost(subject, content, error)
 
 
 
@@ -414,16 +308,14 @@ class PostPage(Handler):
 
         self.query = Comment.all().order('-created')
 
-        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id, count=count, likez=likez, display=display, uname=uname)#, dkey_vis=dkey_vis)#comments)
-
+        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id, count=count, likez=likez, display=display, uname=uname)
 
     def post(self, post_id):
         uname = self.identify()
-        # params = {}
         have_error = False
         delete_post = False
         edit_post = False
-        key = db.Key.from_path("Post", int(post_id))  # COPIED verbatim from above - think I need it here, but not sure.
+        key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         comment = self.request.get("comment")
         if self.read_secure_cookie('user_id'):
@@ -432,12 +324,6 @@ class PostPage(Handler):
         else:
             current_user = None
             current_name = None
-            # self.redirect("/signup")
-
-        # params['post']=post
-        # params['comment']=comment
-        # params['uname']=uname
-        # params['comments']=Comment.all().order('-created')
 
         # I'll attempt to create the liking here
         if self.request.get("like1") and uname:
@@ -445,9 +331,7 @@ class PostPage(Handler):
             l.put()
             sleep(.2)
         elif self.request.get("like1") and not uname:
-            # params['error_like'] = "You must be logged in to Like posts."
             have_error = True
-            # self.redirect("/login")
 
         if self.request.get("unlike"):
             likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
@@ -455,55 +339,31 @@ class PostPage(Handler):
             for likey in likez:
                 if likey.creator == current_user and likey.does_like:
                     delkey = likey.key()
-                    # This works - I just need to FIX - the below !! (syntax is wrong)
 
             if delkey:
-                # entry = delkey.get()
-                # entry.key.delete()
                 db.delete(delkey)
                 sleep(.2)
 
-
-        # key = db.Key.from_path("Post", int(post_id))  # WOW - This is Awesome!!  I will use this code in the Future! *****
-        # post = db.get(key)
-
         if self.request.get("edit_c"):
-            ckey = self.request.get("edit_c")         # I Can Try Key from Path, if I can't get this syntax to work..!
-            # e = ckey.get()
+            ckey = self.request.get("edit_c")
             e = db.get(ckey)
             e.mod = True
             e.put()
             sleep(.2)
 
-
-
         if self.request.get("update_c"):
             ucom = self.request.get("updated_comment")
             ukey = self.request.get("update_c")
             u = db.get(ukey)
-            # u = ukey.get()
             u.content = ucom
             u.mod = False
-
-
             u.put()
             sleep(.2)
-            # HERE - I need to retrieve the key for the like entry, for this user, and then delete that key.
-            # I think I'll retrieve it using my user_id... and need one more piece of information???
-
-
-            # l = Likez(creator=current_user, name=current_name, post_id=post_id, does_like=False)
-            # l.put()
-            # sleep(.5)
-        ######################      HERE - I need a way of changing the former DB entry (not making a new one.) Maybe the Key?  ################
-        ######################    HereTO - I can just delete the like from the database!  That seems the easiest solution!!
 
         if self.request.get("cancel_u_c"):
             cankey = self.request.get("cancel_u_c")
             can = db.get(cankey)
             can.mod = False
-
-
             can.put()
             sleep(.2)
 
@@ -523,32 +383,20 @@ class PostPage(Handler):
             epk = self.request.get("edit_p")
             edit_post = True
 
-
         if comment and uname:
             c = Comment(content=comment, name=current_name, creator=current_user, post_id=post_id)
             c.put()
             sleep(.2)
         elif comment and not uname:
             have_error = True
-
-        # self.redirect("/blog/%s" % str(p.key().id()))
-
-
-
         if delete_post:
             self.redirect("/blog")
         elif edit_post:
             self.redirect("/blog/edit/%s" % str(post_id))
         elif have_error:
-            # self.render('permalink.html', **params)#, post=post, comment=comment, uname=uname)
             self.redirect("/login")
         else:
             self.redirect("/blog/%s" % str(post_id))
-
-
-
-# key = db.Key.from_path("Post", int(post_id))  # COPIED verbatim from above - think I need it here, but not sure.
-# post = db.get(key)
 
 
 class EditPage(Handler):
@@ -556,78 +404,19 @@ class EditPage(Handler):
         uname = self.identify()
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
-        # posts = db.GqlQuery("SELECT * FROM Post")
         self.render("edit.html", post=post, uname=uname, display='NoShow')
 
     def post(self, post_id):
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
-
         update_p_text = self.request.get("post_update")
-
-
-        # if self.request.get("cancel"):
-
 
         if update_p_text:
             post.content = update_p_text
             post.put()
             sleep(.2)
-            # self.redirect("/blog/")
 
         self.redirect("/blog/%s" % str(post_id))
-
-
-
-
-
-
-#######   END   #########
-
-class Email(db.Model):
-    subject = db.StringProperty(required = True)
-    email = db.TextProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
-    last_modified = db.DateTimeProperty(auto_now = True)
-    creator = db.StringProperty(required = True)
-    name = db.StringProperty(required = False)
-
-
-class Tester(Handler):
-    def get(self):
-        # self.write("the user is currently: %s" % self.user.key())
-        emails = db.GqlQuery("SELECT * FROM Email ORDER BY created DESC LIMIT 10")
-        self.render('testerform.html', emails=emails)
-
-
-    def post(self):
-        subject = self.request.get('subject')
-        email = self.request.get('email')
-        if self.read_secure_cookie('user_id'):
-            creator1 = self.request.cookies.get('user_id')
-            # val = h.split('|')[0]
-            creator = creator1.split('|')[0]
-            name1 = self.request.cookies.get('user')
-            name = name1.split('|')[0]
-        else:
-            creator = 'no user set'
-            name = 'no user set'
-
-        if subject and email:  # and self.read_secure_cookie('user'):
-            e = Email(subject=subject, email=email, creator=creator, name=name)
-            e.put()
-            sleep(.2)
-            self.redirect("/tester")
-
-        # emails = db.GqlQuery("SELECT * FROM Email ORDER BY created DESC LIMIT 10")
-        # self.render("testerform.html", emails=emails)
-
-
-
-
-
-
-
 
 
 app = webapp2.WSGIApplication([('/', MainPage),
@@ -639,6 +428,5 @@ app = webapp2.WSGIApplication([('/', MainPage),
                                ("/blog/newpost", NewPost),
                                ("/blog/([0-9]+)", PostPage),
                                ("/blog/edit/([0-9]+)", EditPage),
-                               ("/tester", Tester),
                                 ],
                                 debug=True)

@@ -1,28 +1,11 @@
-<!-- <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>HW4-Reg</title>
-        <style>
-            .error {
-                color: red;
-            }
-        </style>
-    </head>
-    <body>
-        <h2 class="headline">HW4 Registration</h2>
-        <hr>
-        <br> -->
         {% extends "base.html" %}
 
         {% block content %}
-        <!-- <br> -->
         <h2>Register:</h2>
-        <!-- <br> -->
         <form method="post">
             <label>
                 Username:
-                <input type="text" name="username" value="{{username}}">  <!--maybe need a value="{{r_username}}"-->
+                <input type="text" name="username" value="{{username}}">
                 <div class="error">
                     {{error_username}}
                 </div>
@@ -56,5 +39,3 @@
             <button>Submit</button>
         </form>
         {% endblock %}
-    <!-- </body>
-</html> -->

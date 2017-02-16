@@ -1,24 +1,9 @@
-<!-- <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <html lang="en-US">
-
-        <title>Post</title>
-    </head>
-    <body>
-        <h1>Last Post</h1>
-        <hr>
-        <hr> -->
         {% extends "base.html" %}
 
         {% block content %}
-        <!-- <br> -->
-        <!-- <br> -->
         <br>
         <br>
         <br>
-        <!-- <div class="date-created">{{post.created}}</div> -->
         <div class="container">
             <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
             <div class="poster">By: {{post.name}}</div>
@@ -29,47 +14,22 @@
         <br>
         <div class="post-likes">Likes: {{count}}</div>
             {% if current_user == post.creator %}
-                <!-- <form class="view-post" action="/blog">
-                    <input type="submit" value="edit (n/a yet)">
-                </form> -->
                 <form class="post-manip" method="post">
                     <button type="submit" name="edit_p" value="{{post.key()}}">Edit</button>
                 </form>
-                <!-- <form class="view-post" action="/blog">
-                    <input type="submit" value="delete (n/a yet)">
-                </form> -->
                 <form class="post-manip" method="post">
                     <button type="submit" name="delete_p" value="{{post.key()}}">Delete</button>
                 </form>
             {% elif current_user != post.creator and display == 'like' %}
-                <!-- This is experimental !!! -->
                 <form class="like" method="post">
-
                     <button type="submit" name="like1" value="True">Like!</button>
-                <!-- I think I can make this work cy just checking the existince of a text value for this variable -->
-
-                <!-- <form class="like-post" method="post" action="/blog">
-                    <input type="submit" value="Like! (n/a yet)">
-                </form> -->
                 </form>
             {% elif current_user != post.creator and display == 'unlike' %}
-                <!-- This is experimental !!! -->
                 <form class="like" method="post">
-
                     <button type="submit" name="unlike" value="True">Unlike</button>
-                <!-- I think I can make this work cy just checking the existince of a text value for this variable -->
-
-                <!-- <form class="like-post" method="post" action="/blog">
-                    <input type="submit" value="Like! (n/a yet)">
-                </form> -->
                 </form>
-
             {% endif %}
-        <!-- {{error_like}} -->
         <form class="comment" method="post">
-
-
-            <!-- <button type="button" name="like">Like!</button> -->
             <br>
             <br>
             <br>
@@ -84,29 +44,17 @@
         <br>
         <h3>Comments:</h3>
             {% for cm in comments %}
-                <!--This is where the trouble is -->
                 {% if cm.post_id == cur_post_id and not cm.mod %}
-
                 <div class="comment-date">{{cm.created.strftime("%-m/%d/%y")}}</div>
                 <div class="comment-content">{{cm.content.replace('\n', '<br>') | safe}}</div>
                 <div class="comment-author">By: {{cm.name}}</div>
-                <!-- Posted to: {{cm.post_id}} -->
-                <!-- <br> -->
-                <!-- Current: {{cur_post_id}} -->
-                <!-- <br> -->
                     {% if current_user == cm.creator and not cm.mod %}
-                        <!-- <form class="view-post" method="post">
-                            <input type="submit" name="edit_c" value="Edit">
-                        </form> -->
                         <form class="com_manip" method="post">
                             <button type="submit" name="edit_c" value="{{cm.key()}}">Edit</button>
                         </form>
                         <form class="com_manip" method="post">
                             <button type="submit" name="delete_c" value="{{cm.key()}}">Delete</button>
                         </form>
-                        <!-- <form class="view-post" action="/blog">
-                            <input type="submit" value="delete (n/a yet)">
-                        </form> -->
                     {% endif %}
                 {% elif cm.post_id ==cur_post_id and current_user == cm.creator and cm.mod %}
                     <form class="comment-edit" method="post">
@@ -119,13 +67,9 @@
                     </form>
                 <br>
                 {% endif %}
-                <br><br><br>
+                <br>
             {% endfor %}
         <br>
         <br>
         <br>
         {% endblock %}
-<!--
-
-    </body>
-</html> -->

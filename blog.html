@@ -1,56 +1,3 @@
-<!-- <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <html lang="en-US">
-        <title>Main Blog Page</title>
-        <style media="screen">
-            body {
-                margin: 0 auto;
-                max-width: 800px;
-            }
-            h1 {
-                text-align: center;
-            }
-            .post-subject {
-                font-size: 20px;
-                font-weight: bold;
-            }
-            .title-link {
-                color: black;
-            }
-            .nav4blog {
-                display: inline;
-            }
-            .log-io {
-                display: inline;
-            }
-            .blog-title-link {
-                text-decoration: none;
-                color: black;
-            }
-        </style>
-    </head>
-    <body>
-
-        <h1><a class="blog-title-link" href="/blog">Matt's Blog</a></h1>
-
-        <br>
-            {% if uname %}
-                <p class="log-io">You're currently logged in as: {{uname}}</p>
-                <a class="log-io" href="/logout">Logout</a>
-            {% else %}
-                <p class="log-io">You're not currently logged in. </p>
-                <a class="log-io" href="/login">Login</a>
-                <p class="log-io"> or </p>
-                <a class="log-io" href="/signup">Register</a>
-                <p class="log-io"> to Post, Comment on, or Like content.</p>
-            {% endif %}
-        <hr>
-        <hr>
-        <br> -->
-
-<!-- BREAK  BREAK BREAK  BREAK -->
         {% extends "base.html" %}
 
         {% block content %}
@@ -58,8 +5,6 @@
         <form class="nav4blog" method="post">
             <button type="submit" name="create-post" value="True">Create New Post</button>
         </form>
-
-
         <br>
             {% for post in posts %}
                 <br>
@@ -74,30 +19,7 @@
                         {{post.subject | safe}}
                     </a>
                 </div>
-                <!-- <hr> -->
                 <div class="post-content">{{post.content[:400] | safe}}...</div>
-                <!-- <br> -->
-                <!-- <div class="poster">By: {{post.name}}</div> -->
-                <!-- <form class="view-post" action="/blog/{{post.key().id()}}">
-                    <input type="submit" value="View Post">
-                </form> -->
-
-                <!-- <div class="post-content">Poster-Name: {{post.name}}</div>
-                <div class="post-content">Poster-ID: {{post.creator}}</div>
-                <div class="post-content">Post-ID: {{post.key().id()}}</div>
-                <div class="post-content">Post-Key: {{post.key()}}</div> -->
-                <!-- <button type="button" name="view">View Post</button> -->
-
-
                 <br>
             {% endfor %}
-
         {% endblock %}
-
-
-            <!-- BREAK  BREAK BREAK  BREAK -->
-
-
-            <!--
-    </body>
-</html> -->

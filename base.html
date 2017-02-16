@@ -15,14 +15,12 @@
             .post-subject {
                 font-size: 20px;
                 font-weight: bold;
-                /*color: black;*/
             }
             .title-link {
                 color: black;
             }
             .nav4blog {
                 display: inline;
-                /*flex-wrap: nowrap;*/
             }
             .log-io {
                 display: inline;
@@ -38,12 +36,9 @@
                 display: inline;
             }
             .comment-content {
-                /*background: #f0f0f0;*/
                 width: 50%;
             }
             .post-header {
-                /*display: flex;*/
-                /*width: 50%;*/
             }
             .poster {
                 text-align: right;
@@ -61,14 +56,7 @@
         </style>
     </head>
     <body>
-        <!-- <h1>FS-ND Blog</h1>
-        <br> -->
         <h1><a class="blog-title-link" href="/blog">Matt's Blog</a></h1>
-        <!-- <br>
-        <a class="blog-link" href="/blog">
-            <h1>FS-ND Blog</h1>
-        </a> -->
-        <!-- <br> -->
             {% if uname %}
                 <p class="log-io">You're currently logged in as: {{uname}}</p>
                 <a class="log-io" href="/blog/logout">Logout</a>
@@ -81,7 +69,6 @@
             {% endif %}
         <hr>
         <hr>
-        <!-- <br> -->
         <div id="content">
             {% block content %}
             {% endblock %}

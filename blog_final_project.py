@@ -81,7 +81,8 @@ class Handler(webapp2.RequestHandler):
 
     def set_secure_cookie(self, name, val):
         cookie_val = make_secure_val(val)
-        self.response.headers.add_header('Set-Cookie', '%s=%s; Path=/' % (name, cookie_val))
+        self.response.headers.add_header('Set-Cookie',
+                                         '%s=%s; Path=/' % (name, cookie_val))
 
     def read_secure_cookie(self, name):
         cookie_val = self.request.cookies.get(name)
@@ -154,15 +155,18 @@ class Signup(Handler):
         credentials = db.GqlQuery("SELECT * FROM Credential")
         for cr in credentials:
             if cr.username == username:
-                params['error_username'] = "That username already exists. Choose another and try again."
+                params['error_username'] = ("That username already exists. "
+                                            "Choose another and try again.")
                 have_error = True
 
         if have_error:
             self.render('register.html', **params)
         else:
-            c = Credential(username=username, email=email, hashed_password=make_pw_hash(username, verify))
+            c = Credential(username=username, email=email,
+                           hashed_password=make_pw_hash(username, verify))
             c.put()
-            self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
+            self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/'
+                                             % str(make_secure_val(username)))
             self.login(c)
             self.redirect("/blog")
 
@@ -170,7 +174,7 @@ class WelcomeHandler(Handler):
     def get(self):
         usn = self.request.cookies.get('user')
         if check_secure_val(usn):
-            self.render("welcome.html", username = usn.split('|')[0])#, credentials=credentials)
+            self.render("welcome.html", username = usn.split('|')[0])
         else:
             self.redirect('/logout')
 
@@ -186,22 +190,25 @@ class Login(Handler):
         proceed = False
         self.query = Credential.all()
         for self.credential in self.query:
-            if self.credential.username == username and valid_pw(username, password, self.credential.hashed_password):
-                self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % str(make_secure_val(username)))
-                u = self.credential  #.key().id()
+            if self.credential.username == username and valid_pw(username,
+                        password, self.credential.hashed_password):
+                self.response.headers.add_header('Set-Cookie',
+                        'user=%s; Path=/' % str(make_secure_val(username)))
+                u = self.credential
                 self.login(u)
                 proceed = True
-                # self.redirect("/welcome")
                 self.redirect("/blog")
 
         if not proceed:
-            self.render('login.html', error_login='Login Invalid', uname=uname)
+            self.render('login.html', error_login='Login Invalid',
+                        uname=uname)
 
 class Logout(Handler):
     def get(self):
         # delete cookie
         usn = self.request.cookies.get('user')  # TODO: Remove this once I confirm it isn't necessary. (getting the user cookie before deleting it)
-        self.response.headers.add_header('Set-Cookie', 'user=%s; Path=/' % (''))
+        self.response.headers.add_header('Set-Cookie',
+                                         'user=%s; Path=/' % (''))
         self.logout()
         self.redirect("/signup")
 
@@ -212,7 +219,8 @@ class MainPage(Handler):
 class NewPost(Handler):
     def render_newpost(self,subject="",content="", error=""):
         uname = self.identify()
-        self.render("newpost.html",subject=subject, content=content,error=error)
+        self.render("newpost.html",subject=subject, content=content,
+                    error=error)
 
     def get(self):
         self.render_newpost()
@@ -221,16 +229,15 @@ class NewPost(Handler):
         subject = self.request.get("subject")
         content = self.request.get("content")
 
-
-
-        if subject and content and self.read_secure_cookie('user') and self.read_secure_cookie('user_id'):
+        if (subject and content and self.read_secure_cookie('user')
+                        and self.read_secure_cookie('user_id')):
             name1 = self.request.cookies.get('user')
             name = name1.split('|')[0]
             creator1 = self.request.cookies.get('user_id')
             creator = creator1.split('|')[0]
-            p = Post(subject=subject, content=content, creator=creator, name=name)
+            p = Post(subject=subject, content=content, creator=creator,
+                     name=name)
             p.put()
-            # self.write("This worked - now you need to create a redirect.")
             self.redirect("/blog/%s" % str(p.key().id()))
 
         elif not self.read_secure_cookie('user'):
@@ -238,16 +245,16 @@ class NewPost(Handler):
             self.render_newpost(subject,content,error)
 
         else:
-            error = "You need to enter both a Subject and Content to create a new post."
+            error = ("You need to enter both a Subject and Content to create "
+                     "a new post.")
             self.render_newpost(subject, content, error)
 
 
 class Blog(Handler):
     def render_fpage(self):
-        posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")
+        # posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")  # Only delete this, if I'm REALLY sure it's all working
+        posts = Post.all().order('-created').fetch(limit=10)
         uname = self.identify()
-        # self.initialize()
-        # self.identify()
         self.render("blog.html", posts=posts, uname=uname)
 
     def get(self):
@@ -281,7 +288,7 @@ class Likez(db.Model):
 
 class PostPage(Handler):
     def get(self, post_id):
-        key = db.Key.from_path("Post", int(post_id))  # WOW - This is Awesome!!  I will use this code in the Future! *****
+        key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         uname = self.identify()
         if self.read_secure_cookie('user_id'):
@@ -303,12 +310,15 @@ class PostPage(Handler):
 
         display = 'like'
         for li in likez:
-            if li.post_id == post_id and li.creator == current_user and li.does_like:
+            if (li.post_id == post_id and li.creator == current_user
+                            and li.does_like):
                 display = 'unlike'
 
         self.query = Comment.all().order('-created')
 
-        self.render("permalink.html", post=post, current_user=current_user, comments=self.query, cur_post_id=post_id, count=count, likez=likez, display=display, uname=uname)
+        self.render("permalink.html", post=post, current_user=current_user,
+                    comments=self.query, cur_post_id=post_id, count=count,
+                    likez=likez, display=display, uname=uname)
 
     def post(self, post_id):
         uname = self.identify()
@@ -327,7 +337,8 @@ class PostPage(Handler):
 
         # I'll attempt to create the liking here
         if self.request.get("like1") and uname:
-            l = Likez(creator=current_user, name=current_name, post_id=post_id, does_like=True)
+            l = Likez(creator=current_user, name=current_name,
+                      post_id=post_id, does_like=True)
             l.put()
             sleep(.2)
         elif self.request.get("like1") and not uname:
@@ -384,7 +395,8 @@ class PostPage(Handler):
             edit_post = True
 
         if comment and uname:
-            c = Comment(content=comment, name=current_name, creator=current_user, post_id=post_id)
+            c = Comment(content=comment, name=current_name,
+                        creator=current_user, post_id=post_id)
             c.put()
             sleep(.2)
         elif comment and not uname:

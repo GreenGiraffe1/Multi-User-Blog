@@ -64,8 +64,10 @@
             {% for post in posts %}
                 <br>
                 <br>
-                <div class="post-header date-created">{{post.created.strftime("%b %d, %Y")}}</div>
-                <!-- <div class="post-header poster">By: {{post.name}}</div> -->
+                <div class="container">
+                    <div class="post-header date-created">{{post.created.strftime("%b %d, %Y")}}</div>
+                    <div class="post-header poster">By: {{post.name}}</div>
+                </div>
                 <hr>
                 <div class="post-subject">
                     <a class="title-link" href="/blog/{{post.key().id()}}">
@@ -74,11 +76,12 @@
                 </div>
                 <!-- <hr> -->
                 <div class="post-content">{{post.content[:400] | safe}}...</div>
-                <br>
-                <div class="poster">By: {{post.name}}</div>
-                <form class="view-post" action="/blog/{{post.key().id()}}">
+                <!-- <br> -->
+                <!-- <div class="poster">By: {{post.name}}</div> -->
+                <!-- <form class="view-post" action="/blog/{{post.key().id()}}">
                     <input type="submit" value="View Post">
-                </form>
+                </form> -->
+
                 <!-- <div class="post-content">Poster-Name: {{post.name}}</div>
                 <div class="post-content">Poster-ID: {{post.creator}}</div>
                 <div class="post-content">Post-ID: {{post.key().id()}}</div>

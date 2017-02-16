@@ -16,12 +16,16 @@
         <!-- <br> -->
         <!-- <br> -->
         <br>
+        <br>
         <!-- <div class="date-created">{{post.created}}</div> -->
-        <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
-        <div class="poster">By: {{post.name}}</div>
+        <div class="container">
+            <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
+            <div class="poster">By: {{post.name}}</div>
+        </div>
         <hr>
         <div class="post-subject"><b>{{post.subject | safe}}</b></div>
         <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
+        <br>
         <div class="post-likes">Likes: {{count}}</div>
             {% if current_user == post.creator %}
                 <!-- <form class="view-post" action="/blog">

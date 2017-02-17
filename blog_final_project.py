@@ -295,15 +295,27 @@ class NewPost(Handler):
 
     """Accept user input of a blog post, and save it in the Post entity."""
 
-    def render_newpost(self,subject="",content="", error=""):
+    def render_newpost(self, subject="" ,content="", error=""):
+        """Render newpost page where user can create blog posts."""
         uname = self.identify()
         self.render("newpost.html",subject=subject, content=content,
                     error=error)
 
     def get(self):
+        """Call method that renders the newpost page."""
         self.render_newpost()
 
     def post(self):
+        """Coditionally create new blog posts.
+
+        Accept user input for blog post subject and content, and if the user
+        is signed in (checked for be examining cookies), and they have
+        included both a subject and content, create a new post object in the
+        Post entity. If the visitor is not logged in, redirect them to the
+        login page to do so. If the user doesn't enter both a subject and
+        content, prompt them to do so with an error message.
+
+        """
         subject = self.request.get("subject")
         content = self.request.get("content")
         if (subject and content and self.read_secure_cookie("user")
@@ -330,15 +342,29 @@ class Blog(Handler):
     """Displays 10 most recent posts from Post entity on main blog page."""
 
     def render_fpage(self):
-        # posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")  # Only delete this, if I"m REALLY sure it"s all working
+        """Display the main blog page.
+
+        Query the Post entity for the 10 most recent blog posts and display
+        them in descending order of their creation date / time, along with
+        their author and when they were first posted.
+
+        """
         posts = Post.all().order("-created").fetch(limit=10)
         uname = self.identify()
         self.render("blog.html", posts=posts, uname=uname)
 
     def get(self):
+        """Call function that renders the main blog page."""
         self.render_fpage()
 
     def post(self):
+        """Allow users to proceed to newpost page if logged in.
+
+        If a user is logged in, upon clicking the 'Create New Post' button
+        load the newpost page where they can create a new blog post. If the
+        visitor is not logged in redirect them to the the login page.
+
+        """
         uname=self.identify()
         if self.request.get("create-post") and uname:
             self.redirect("/blog/newpost")
@@ -348,7 +374,7 @@ class Blog(Handler):
 
 class Comment(db.Model):
 
-    """Entity Stores all attributes of comments (written on blog posts)."""
+    """Store all attributes of comments (written on blog posts)."""
 
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
@@ -361,7 +387,7 @@ class Comment(db.Model):
 
 class Likez(db.Model):
 
-    """Entity Stores all attributes of 'Likes' for blog posts."""
+    """Store all attributes of 'Likes' for blog posts."""
 
     does_like = db.BooleanProperty(required = True) #I need a True / False Value..., then I'll need to count up the "True's"
     created = db.DateTimeProperty(auto_now_add = True)
@@ -373,9 +399,31 @@ class Likez(db.Model):
 
 class PostPage(Handler):
 
-    """Displays individual posts with corresponding comments & 'Likes'."""
+    """Display individual posts with corresponding comments & 'Likes'."""
 
     def get(self, post_id):
+        """Display individual blog posts and all related content.
+
+        Display individual blog posts corresponding to the id in the url
+        (will match the id in the Post entity), and corresponding 'Likes',
+        comments, and editing options based on user permissions. Retrieve
+        these objects by querying the Post, Likez, and Comment entities
+        respectively. Display only the objects that match the current post's
+        Post id.
+
+        If the visitor is not logged in they will only see the post, 'Likes' and
+        comments, but not the editing options.
+
+        If a user is logged in they will see buttons allowing them to edit or
+        delete posts they have created, and comments they have created.
+        Display a button to 'Like' the post if they haven't 'Liked' it yet, or
+        an 'Unlike' button if they have.
+
+        These permissions will be determined by comparing their user_id
+        (stored in a cookie) with the user_id of the post and comment
+        creators.
+
+        """
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         uname = self.identify()

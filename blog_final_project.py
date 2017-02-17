@@ -31,37 +31,39 @@ SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
     """Check username entered to determine if it's valid (with REGEX)."""
+
     return USER_RE.match(username)
 
 
 PASSWORD_RE = re.compile(r"^.{3,20}$")
 def valid_password(password):
     """Check password entered to determine if it's valid (with REGEX)."""
+
     return PASSWORD_RE.match(password)
 
 
 EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
 def valid_email(email):
     """Check email entered to determine if it's valid (with REGEX)."""
+
     return EMAIL_RE.match(email)
 
 
 def hash_str(s):
     """Hashes the user_id and SECRET (a constant) to create a cookie hash."""
+
     return hmac.new(SECRET,s).hexdigest()
 
 
 def make_secure_val(s):
-    """Takes the user_id as input, and returns the value that will be set for
-    the cookie, a string containing the user_id and the hashed user_id.
-    """
+    """user_id is input, it returns the value to set for the cookie."""
+
     return "%s|%s" % (s, hash_str(s))
 
 
 def check_secure_val(h):
-    """Checks the cookie value from the current webpage, and determines
-    whether it's valid.
-    """
+    """Checks whether the cookie value from the current webpage is valid."""
+
     if h:
         val = h.split("|")[0]
         if h == make_secure_val(val):
@@ -69,15 +71,14 @@ def check_secure_val(h):
 
 
 def make_salt(length = 5):
-    """Creates a unique salt for hashing with a user's password during signup.
-    """
+    """Creates a unique salt for hashing a user's password during signup."""
+
     return "".join(random.choice(letters) for x in xrange(length))
 
 
 def make_pw_hash(name, pw, salt = None):
-    """Creates a new password hash during signup, or checks a password hash's
-    validity during login. Calls a function to create a salt during signup.
-    """
+    """Makes password hash on signup, or checks password hash on login."""
+
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(name + pw + salt).hexdigest()
@@ -85,8 +86,8 @@ def make_pw_hash(name, pw, salt = None):
 
 
 def valid_pw(name, password, h):
-    """Checks validity of a user's inputed password during login by hashing it
-    and comparing it to the stored value in the Credential table/entity."""
+    """Checks hash of user's login against value in the Credential entity."""
+    
     salt = h.split("|")[0]
     return h == make_pw_hash(name, password, salt)
 
@@ -426,8 +427,8 @@ class PostPage(Handler):
                         creator=current_user, post_id=post_id)
             c.put()
             sleep(.2)
-        elif comment and not uname:
-            have_error = True
+        # elif comment and not uname:    ###  I think I can delete this, but I'm going to test it first without (Fri 2/17 9am)
+        #     have_error = True
         if delete_post:
             self.redirect("/blog")
         elif edit_post:

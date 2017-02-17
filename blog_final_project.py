@@ -164,10 +164,19 @@ class Signup(Handler):
     """Handles user input and errors on the signup webpage, sets cookies."""
 
     def get(self):
+        """Render signup page."""
         uname = self.identify()
         self.render("register.html", uname=uname)
 
     def post(self):
+        """Accept user inputs and conditionally register user.
+
+        Verify that all inputs meet the established criteria, if not render
+        appropriate error message and ask for new input. Upon valid input
+        create a new object in the Credential entity for the registered user,
+        and set 2 cookies: 'user' and 'user_id'.
+
+        """
         uname = self.identify()
         username = self.request.get("username")
         password = self.request.get("password")
@@ -214,6 +223,7 @@ class WelcomeHandler(Handler):
     """Display a welcome message to user upon successful login or signup."""
 
     def get(self):
+        """Display welcome message if cookie is secure, else log user out."""
         usn = self.request.cookies.get("user")
         if check_secure_val(usn):
             self.render("welcome.html", username = usn.split("|")[0])
@@ -223,13 +233,23 @@ class WelcomeHandler(Handler):
 
 class Login(Handler):
 
-    """Handles user input and errors on the login webpage, sets cookies."""
+    """Handle user input and errors on the login webpage, set cookies."""
 
     def get(self):
+        """Render login page."""
         uname = self.identify()
         self.render("login.html", uname=uname)
 
     def post(self):
+        """Accept login credentials, conditionally log user in.
+
+        Check user input to against the Credential entity, and log them in if
+        the user is found. The hash of the entered password is compared with
+        the stored hash to determine validity. Upon successful login set
+        secure cookies 'user' and 'user_id'. If login is unsuccessful display
+        error message.
+
+        """
         uname = self.identify()
         username = self.request.get("username")
         password = self.request.get("password")
@@ -254,7 +274,7 @@ class Logout(Handler):
     """Logs a user out by reseting cookies. (No webpage / user interface)."""
 
     def get(self):
-        # delete cookie
+        """Log user out by setting cookie values to ''."""
         usn = self.request.cookies.get("user")  # TODO: Remove this once I confirm it isn"t necessary. (getting the user cookie before deleting it)
         self.response.headers.add_header("Set-Cookie",
                                          "user=%s; Path=/" % (""))
@@ -264,15 +284,16 @@ class Logout(Handler):
 
 class MainPage(Handler):
 
-    """Redirects users to the main blog page."""
+    """Redirect visitors to the main blog page."""
 
     def get(self):
+        """Redirect visitors to the main blog page."""
         self.redirect("/blog")
 
 
 class NewPost(Handler):
 
-    """Allows user to input a blog post, and saves it in the Post Entity."""
+    """Accept user input of a blog post, and save it in the Post entity."""
 
     def render_newpost(self,subject="",content="", error=""):
         uname = self.identify()

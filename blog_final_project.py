@@ -12,54 +12,72 @@ import jinja2
 from google.appengine.ext import db
 
 
-template_dir = os.path.join(os.path.dirname(__file__))#, "templates") - I chose not to create a template directory for ease of use while learning.
+# The following 2 lines of code create the template directory, and create an
+# instance of the jinja object (for templating) respectively.
+# Templates are stored in the same directory as the .py file
+# I chose not to create a template directory for ease of use while learning.
+# In the future I'll store them in a seperate folder with the following code:
+# template_dir = os.path.join(os.path.dirname(__file__, "templates"))
+template_dir = os.path.join(os.path.dirname(__file__))
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                                autoescape = True)
 
 
-SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"  # "salt" for the secure cookie (normally this would be held in another secure module)
+# value to hash with cookie values to make them secure. (normally this would be
+# held in another secure module, but is here for ease of learning.)
+SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"
 
 
-# username verification - using REGEX
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
+    """Check username entered to determine if it's valid (with REGEX)."""
     return USER_RE.match(username)
 
 
-# password verification
 PASSWORD_RE = re.compile(r"^.{3,20}$")
 def valid_password(password):
+    """Check password entered to determine if it's valid (with REGEX)."""
     return PASSWORD_RE.match(password)
 
 
-# email verification
 EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
 def valid_email(email):
+    """Check email entered to determine if it's valid (with REGEX)."""
     return EMAIL_RE.match(email)
 
 
 def hash_str(s):
+    """Hashes the user_id and SECRET (a constant) to create a cookie hash."""
     return hmac.new(SECRET,s).hexdigest()
 
 
-# returns a string of the format: s,HASH
 def make_secure_val(s):
+    """Takes the user_id as input, and returns the value that will be set for
+    the cookie, a string containing the user_id and the hashed user_id.
+    """
     return "%s|%s" % (s, hash_str(s))
 
 
 def check_secure_val(h):
+    """Checks the cookie value from the current webpage, and determines
+    whether it's valid.
+    """
     if h:
         val = h.split("|")[0]
         if h == make_secure_val(val):
             return val
 
 
-## Password Hashing / Manipulation
 def make_salt(length = 5):
+    """Creates a unique salt for hashing with a user's password during signup.
+    """
     return "".join(random.choice(letters) for x in xrange(length))
 
 
 def make_pw_hash(name, pw, salt = None):
+    """Creates a new password hash during signup, or checks a password hash's
+    validity during login. Calls a function to create a salt during signup.
+    """
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(name + pw + salt).hexdigest()
@@ -67,12 +85,10 @@ def make_pw_hash(name, pw, salt = None):
 
 
 def valid_pw(name, password, h):
+    """Checks validity of a user's inputed password during login by hashing it
+    and comparing it to the stored value in the Credential table/entity."""
     salt = h.split("|")[0]
     return h == make_pw_hash(name, password, salt)
-
-
-def pwhasher(pw):
-    return hmac.new("salt",pw).hexdigest()
 
 
 class Handler(webapp2.RequestHandler):

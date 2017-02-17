@@ -218,19 +218,6 @@ class Signup(Handler):
             self.redirect("/blog")
 
 
-class WelcomeHandler(Handler):
-
-    """Display a welcome message to user upon successful login or signup."""
-
-    def get(self):
-        """Display welcome message if cookie is secure, else log user out."""
-        usn = self.request.cookies.get("user")
-        if check_secure_val(usn):
-            self.render("welcome.html", username = usn.split("|")[0])
-        else:
-            self.redirect("/blog/logout")
-
-
 class Login(Handler):
 
     """Handle user input and errors on the login webpage, set cookies."""
@@ -609,7 +596,6 @@ class EditPage(Handler):
 
 
 app = webapp2.WSGIApplication([("/", MainPage),
-                               ("/blog/welcome",WelcomeHandler),
                                ("/blog/signup", Signup),
                                ("/blog/login", Login),
                                ("/blog/logout", Logout),

@@ -1,3 +1,13 @@
+"""This module performs all the backend functions of Matt's Blog.
+
+This document, the HTML pages, and the database entities are stored / hosted
+by Google App Engine. This module supports registration, login, and logging
+out with password hashing and secure cookies. Logged in users may create blog
+posts, comment on posts, like other's posts, and delete or edit their own blog
+posts,or comments.
+
+"""
+
 import os
 import re
 
@@ -31,39 +41,33 @@ SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 def valid_username(username):
     """Check username entered to determine if it's valid (with REGEX)."""
-
     return USER_RE.match(username)
 
 
 PASSWORD_RE = re.compile(r"^.{3,20}$")
 def valid_password(password):
     """Check password entered to determine if it's valid (with REGEX)."""
-
     return PASSWORD_RE.match(password)
 
 
 EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
 def valid_email(email):
     """Check email entered to determine if it's valid (with REGEX)."""
-
     return EMAIL_RE.match(email)
 
 
 def hash_str(s):
     """Hashes the user_id and SECRET (a constant) to create a cookie hash."""
-
     return hmac.new(SECRET,s).hexdigest()
 
 
 def make_secure_val(s):
     """user_id is input, it returns the value to set for the cookie."""
-
     return "%s|%s" % (s, hash_str(s))
 
 
 def check_secure_val(h):
     """Checks whether the cookie value from the current webpage is valid."""
-
     if h:
         val = h.split("|")[0]
         if h == make_secure_val(val):
@@ -72,13 +76,11 @@ def check_secure_val(h):
 
 def make_salt(length = 5):
     """Creates a unique salt for hashing a user's password during signup."""
-
     return "".join(random.choice(letters) for x in xrange(length))
 
 
 def make_pw_hash(name, pw, salt = None):
     """Makes password hash on signup, or checks password hash on login."""
-
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(name + pw + salt).hexdigest()
@@ -87,40 +89,48 @@ def make_pw_hash(name, pw, salt = None):
 
 def valid_pw(name, password, h):
     """Checks hash of user's login against value in the Credential entity."""
-    
     salt = h.split("|")[0]
     return h == make_pw_hash(name, password, salt)
 
 
 class Handler(webapp2.RequestHandler):
+
     """Parent Handler of all other Handlers. Handles user interaction."""
 
     def write(self, *a, **kw):
+        """Write text/elements to HTML page"""
         self.response.out.write(*a, **kw)
 
     def render_str(self, template, **params):
+        """Create jinja template object with input parameters"""
         t = jinja_env.get_template(template)
         return t.render(params)
 
     def render(self, template, **kw):
+        """Display HTML page, pass parameters to template object"""
         self.write(self.render_str(template, **kw))
 
     def set_secure_cookie(self, name, val):
+        """Create and set secure cookie upon login or signup"""
         cookie_val = make_secure_val(val)
         self.response.headers.add_header("Set-Cookie",
                         "%s=%s; Path=/" % (name, cookie_val))
 
     def read_secure_cookie(self, name):
+        """Verify that inputed cookie is secure/ hasn't been modified."""
         cookie_val = self.request.cookies.get(name)
         return cookie_val and check_secure_val(cookie_val)
 
     def login(self, user):
+        """Create and set secure cookie 'user_id' upon login or signup"""
         self.set_secure_cookie("user_id", str(user.key().id()))
 
     def logout(self):
+        """Reset 'user_id' cookie to = '' upon logout"""
         self.response.headers.add_header("Set-Cookie", "user_id=; Path=/")
 
     def identify(self):
+        """Read cookie 'user', and return the 'name' value if secure"""
         if self.read_secure_cookie("user"):
             uname = self.read_secure_cookie("user").split("|")[0]
         else:
@@ -129,6 +139,7 @@ class Handler(webapp2.RequestHandler):
 
 
 class Credential(db.Model):
+
     """Entity stores all attributes of user login credentials."""
 
     username = db.StringProperty(required = True)
@@ -137,6 +148,7 @@ class Credential(db.Model):
 
 
 class Post(db.Model):
+
     """Entity Stores all attributes of blog posts."""
 
     subject = db.StringProperty(required = True)
@@ -148,6 +160,7 @@ class Post(db.Model):
 
 
 class Signup(Handler):
+
     """Handles user input and errors on the signup webpage, sets cookies."""
 
     def get(self):
@@ -197,6 +210,7 @@ class Signup(Handler):
 
 
 class WelcomeHandler(Handler):
+
     """Display a welcome message to user upon successful login or signup."""
 
     def get(self):
@@ -208,6 +222,7 @@ class WelcomeHandler(Handler):
 
 
 class Login(Handler):
+
     """Handles user input and errors on the login webpage, sets cookies."""
 
     def get(self):
@@ -235,6 +250,7 @@ class Login(Handler):
 
 
 class Logout(Handler):
+
     """Logs a user out by reseting cookies. (No webpage / user interface)."""
 
     def get(self):
@@ -247,6 +263,7 @@ class Logout(Handler):
 
 
 class MainPage(Handler):
+
     """Redirects users to the main blog page."""
 
     def get(self):
@@ -254,6 +271,7 @@ class MainPage(Handler):
 
 
 class NewPost(Handler):
+
     """Allows user to input a blog post, and saves it in the Post Entity."""
 
     def render_newpost(self,subject="",content="", error=""):
@@ -287,7 +305,8 @@ class NewPost(Handler):
 
 
 class Blog(Handler):
-    """Displays the 10 most recent posts from Post entity on main blog page."""
+
+    """Displays 10 most recent posts from Post entity on main blog page."""
 
     def render_fpage(self):
         # posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")  # Only delete this, if I"m REALLY sure it"s all working
@@ -307,6 +326,7 @@ class Blog(Handler):
 
 
 class Comment(db.Model):
+
     """Entity Stores all attributes of comments (written on blog posts)."""
 
     content = db.TextProperty(required = True)
@@ -319,6 +339,7 @@ class Comment(db.Model):
 
 
 class Likez(db.Model):
+
     """Entity Stores all attributes of 'Likes' for blog posts."""
 
     does_like = db.BooleanProperty(required = True) #I need a True / False Value..., then I'll need to count up the "True's"
@@ -330,6 +351,7 @@ class Likez(db.Model):
 
 
 class PostPage(Handler):
+
     """Displays individual posts with corresponding comments & 'Likes'."""
 
     def get(self, post_id):
@@ -440,6 +462,7 @@ class PostPage(Handler):
 
 
 class EditPage(Handler):
+
     """Allows user to edit a post they've created"""
 
     def get(self, post_id):

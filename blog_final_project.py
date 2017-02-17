@@ -450,6 +450,29 @@ class PostPage(Handler):
                     likez=likez, display=display, uname=uname)
 
     def post(self, post_id):
+        """Allow user to comment and Like posts, and edit their contributions.
+
+        Take user input and conditionally allow them to make contributions,
+        and modify past contributions. If a visitor is not logged in redirect
+        them to the login page upon them sending requests to the server
+        for 'Liking' or commenting posts.
+
+        Logged in users can comment on posts, and 'Like' or 'Unlike' posts
+        by clicking the appropriate buttons, which will send info to the
+        server and in some cases modify the Comment or Likez entities
+        where those items are held.
+
+        Display comments and 'Likes' based on the post's Post post_id, which
+        is saved in the respective Comment and Likez entities.
+
+        Users can edit or delete a comment, or the post if they created it.
+        This is established by checking if their user_id (stored in a cookie)
+        matches the post/comment creator id.
+
+        The 'if statements' near the bottom determine what information the
+        user has sent to the server, and takes the appropriate action.
+
+        """
         uname = self.identify()
         have_error = False
         delete_post = False
@@ -532,15 +555,27 @@ class PostPage(Handler):
 
 class EditPage(Handler):
 
-    """Allows user to edit a post they've created"""
+    """Allows user to edit a post they've created."""
 
     def get(self, post_id):
+        """Render page where a poster can edit post, post_id passed in URL."""
         uname = self.identify()
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
-        self.render("edit.html", post=post, uname=uname, display="NoShow")
+        self.render("edit.html", post=post, uname=uname)#, display="NoShow")
 
     def post(self, post_id):
+        """Accept user input and save or cancel editing accordingly.
+
+        Receive an update request from server when user pushes the submit
+        button. Update the post.content attribute of the corresponding Post
+        entity. This Post object is determined by retrieving the post_id from
+        the URL.
+
+        If the user pushes the cancel button don't send anything to the server
+        and redirect the user to the post's main display page.
+
+        """
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         update_p_text = self.request.get("post_update")

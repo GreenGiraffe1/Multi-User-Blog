@@ -83,7 +83,7 @@ def make_pw_hash(name, pw, salt = None):
     """Makes password hash on signup, or checks password hash on login."""
     if not salt:
         salt = make_salt()
-    h = hashlib.sha256(name + pw + salt).hexdigest()
+    h = hashlib.sha256(name + pw + salt).hexdigest()  # sha256 hash algorithm
     return "%s|%s" % (salt,h)
 
 
@@ -182,7 +182,7 @@ class Signup(Handler):
         password = self.request.get("password")
         verify = self.request.get("verify")
         email = self.request.get("email")
-        #### New Logic - with Dictionary Error Handling
+        # params dictionary used for error handling
         params = dict(username = username,
                       email = email, uname=uname)
         have_error = False
@@ -199,7 +199,7 @@ class Signup(Handler):
             if not valid_email(email):
                 params["error_email"] = "That's not a valid email."
                 have_error = True
-        # check here if the username is already in the database - if so - throw an error - make them Pick a new username
+        # GQL query the Google App Engine (GAE) datastore, Credential entity
         credentials = db.GqlQuery("SELECT * FROM Credential")
         for cr in credentials:
             if cr.username == username:
@@ -211,10 +211,10 @@ class Signup(Handler):
         else:
             c = Credential(username=username, email=email,
                            hashed_password=make_pw_hash(username, verify))
-            c.put()
+            c.put()  # sends Credential object "c" to the GAE datastore
             self.response.headers.add_header("Set-Cookie", "user=%s; Path=/"
                                              % str(make_secure_val(username)))
-            self.login(c)
+            self.login(c)  # set secure cookie "user_id"
             self.redirect("/blog")
 
 
@@ -254,6 +254,7 @@ class Login(Handler):
         username = self.request.get("username")
         password = self.request.get("password")
         proceed = False
+        # Query the Google App Engine (GAE) datastore, Credential entity
         self.query = Credential.all()
         for self.credential in self.query:
             if self.credential.username == username and valid_pw(username,
@@ -261,7 +262,7 @@ class Login(Handler):
                 self.response.headers.add_header("Set-Cookie",
                         "user=%s; Path=/" % str(make_secure_val(username)))
                 u = self.credential
-                self.login(u)
+                self.login(u)  # set secure "user_id" cookie
                 proceed = True
                 self.redirect("/blog")
         if not proceed:
@@ -275,10 +276,10 @@ class Logout(Handler):
 
     def get(self):
         """Log user out by setting cookie values to ''."""
-        usn = self.request.cookies.get("user")  # TODO: Remove this once I confirm it isn"t necessary. (getting the user cookie before deleting it)
+        usn = self.request.cookies.get("user")
         self.response.headers.add_header("Set-Cookie",
                                          "user=%s; Path=/" % (""))
-        self.logout()
+        self.logout()  # Reset the "user_id" cookie to ""
         self.redirect("/blog/signup")
 
 
@@ -326,11 +327,11 @@ class NewPost(Handler):
             creator = creator1.split("|")[0]
             p = Post(subject=subject, content=content, creator=creator,
                      name=name)
-            p.put()
+            p.put()  # sends Post object "p" to the GAE datastore
             self.redirect("/blog/%s" % str(p.key().id()))
         elif not self.read_secure_cookie("user"):
             error = "You must be logged in to create a new post."
-            self.render_newpost(subject,content,error)
+            self.render_newpost(subject, content, error)
         else:
             error = ("You need to enter both a Subject and Content to create "
                      "a new post.")
@@ -349,6 +350,8 @@ class Blog(Handler):
         their author and when they were first posted.
 
         """
+        # Query the Google App Engine (GAE) datastore, Post entity, return the
+        # 10 most recent posts in descending order of creation time.
         posts = Post.all().order("-created").fetch(limit=10)
         uname = self.identify()
         self.render("blog.html", posts=posts, uname=uname)
@@ -389,7 +392,7 @@ class Likez(db.Model):
 
     """Store all attributes of 'Likes' for blog posts."""
 
-    does_like = db.BooleanProperty(required = True) #I need a True / False Value..., then I'll need to count up the "True's"
+    does_like = db.BooleanProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
     creator = db.StringProperty(required = True)
@@ -424,6 +427,7 @@ class PostPage(Handler):
         creators.
 
         """
+        # Retrieve object key with entity name and attribute id number
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         uname = self.identify()
@@ -477,6 +481,7 @@ class PostPage(Handler):
         have_error = False
         delete_post = False
         edit_post = False
+        # Retrieve object key with entity name and attribute id number
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         comment = self.request.get("comment")
@@ -486,63 +491,78 @@ class PostPage(Handler):
         else:
             current_user = None
             current_name = None
-        # I'll attempt to create the liking here
         if self.request.get("like1") and uname:
+            # User clicked "Like", store it in the Likez entity
             l = Likez(creator=current_user, name=current_name,
                       post_id=post_id, does_like=True)
-            l.put()
+            l.put()  # sends Likez object "l" to the GAE datastore
             sleep(.2)
         elif self.request.get("like1") and not uname:
             have_error = True
         if self.request.get("unlike"):
+            # User clicked "Unlike" button, remove this "Like" object from
+            # the Likez entity
+            # GQL query the Google App Engine (GAE) datastore, Likez entity
             likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
             delkey = None
             for likey in likez:
                 if likey.creator == current_user and likey.does_like:
                     delkey = likey.key()
             if delkey:
-                db.delete(delkey)
+                db.delete(delkey)  # Deletes the "Like"
                 sleep(.2)
         if self.request.get("edit_c"):
+            # User clicked "edit comment" button, set value of comment.mod to
+            # True
             ckey = self.request.get("edit_c")
             e = db.get(ckey)
             e.mod = True
-            e.put()
+            e.put()  # sends updated Comment object "e" to the GAE datastore
             sleep(.2)
+
         if self.request.get("update_c"):
+            # User submitted the updated comment, update value of
+            # comment.content in Comment entity and reset the value of
+            # comment.mod to False
             ucom = self.request.get("updated_comment")
             ukey = self.request.get("update_c")
             u = db.get(ukey)
             u.content = ucom
             u.mod = False
-            u.put()
+            u.put()  # sends updated Comment object "u" to the GAE datastore
             sleep(.2)
         if self.request.get("cancel_u_c"):
+            # User canceled updating the comment, reset the value of
+            # comment.mod to False
             cankey = self.request.get("cancel_u_c")
             can = db.get(cankey)
             can.mod = False
             can.put()
             sleep(.2)
         if self.request.get("delete_c"):
+            # User clicked "delete comment" button, remove comment object from
+            # Comment entity
             dd_key = self.request.get("delete_c")
-            # dd = db.get(dd_key)
             db.delete(dd_key)
             sleep(.2)
         if self.request.get("delete_p"):
+            # User clicked "delete post" button, remove Post object from
+            # Post entity
             dpk = self.request.get("delete_p")
-            db.delete(dpk)
+            db.delete(dpk)  # Deletes post based on its key
             delete_post = True
             sleep(.2)
         if self.request.get("edit_p"):
+            # User clicked "edit post" button, edit_post flag will redirect
+            # user to the editing page
             epk = self.request.get("edit_p")
             edit_post = True
         if comment and uname:
+            # User submitted new comment, save it in the Comment entity
             c = Comment(content=comment, name=current_name,
                         creator=current_user, post_id=post_id)
-            c.put()
+            c.put()  # sends Comment object "c" to the GAE datastore
             sleep(.2)
-        # elif comment and not uname:    ###  I think I can delete this, but I'm going to test it first without (Fri 2/17 9am)
-        #     have_error = True
         if delete_post:
             self.redirect("/blog")
         elif edit_post:
@@ -560,6 +580,7 @@ class EditPage(Handler):
     def get(self, post_id):
         """Render page where a poster can edit post, post_id passed in URL."""
         uname = self.identify()
+        # Retrieve object key with entity name and attribute id number
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         self.render("edit.html", post=post, uname=uname)#, display="NoShow")
@@ -576,12 +597,13 @@ class EditPage(Handler):
         and redirect the user to the post's main display page.
 
         """
+        # Retrieve object key with entity name and attribute id number
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         update_p_text = self.request.get("post_update")
         if update_p_text:
             post.content = update_p_text
-            post.put()
+            post.put()  # sends updated Post object "post" to GAE datastore
             sleep(.2)
         self.redirect("/blog/%s" % str(post_id))
 

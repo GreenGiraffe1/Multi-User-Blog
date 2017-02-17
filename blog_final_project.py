@@ -92,6 +92,7 @@ def valid_pw(name, password, h):
 
 
 class Handler(webapp2.RequestHandler):
+    """Parent Handler of all other Handlers. Handles user interaction."""
 
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
@@ -127,12 +128,16 @@ class Handler(webapp2.RequestHandler):
 
 
 class Credential(db.Model):
+    """Entity stores all attributes of user login credentials."""
+
     username = db.StringProperty(required = True)
     email = db.StringProperty(required = False)
     hashed_password = db.TextProperty(required = True)
 
 
 class Post(db.Model):
+    """Entity Stores all attributes of blog posts."""
+
     subject = db.StringProperty(required = True)
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
@@ -142,6 +147,7 @@ class Post(db.Model):
 
 
 class Signup(Handler):
+    """Handles user input and errors on the signup webpage, sets cookies."""
 
     def get(self):
         uname = self.identify()
@@ -190,6 +196,7 @@ class Signup(Handler):
 
 
 class WelcomeHandler(Handler):
+    """Display a welcome message to user upon successful login or signup."""
 
     def get(self):
         usn = self.request.cookies.get("user")
@@ -200,6 +207,7 @@ class WelcomeHandler(Handler):
 
 
 class Login(Handler):
+    """Handles user input and errors on the login webpage, sets cookies."""
 
     def get(self):
         uname = self.identify()
@@ -226,6 +234,7 @@ class Login(Handler):
 
 
 class Logout(Handler):
+    """Logs a user out by reseting cookies. (No webpage / user interface)."""
 
     def get(self):
         # delete cookie
@@ -237,12 +246,14 @@ class Logout(Handler):
 
 
 class MainPage(Handler):
+    """Redirects users to the main blog page."""
 
     def get(self):
         self.redirect("/blog")
 
 
 class NewPost(Handler):
+    """Allows user to input a blog post, and saves it in the Post Entity."""
 
     def render_newpost(self,subject="",content="", error=""):
         uname = self.identify()
@@ -275,6 +286,7 @@ class NewPost(Handler):
 
 
 class Blog(Handler):
+    """Displays the 10 most recent posts from Post entity on main blog page."""
 
     def render_fpage(self):
         # posts = db.GqlQuery("SELECT * FROM Post ORDER BY created DESC LIMIT 10")  # Only delete this, if I"m REALLY sure it"s all working
@@ -294,6 +306,8 @@ class Blog(Handler):
 
 
 class Comment(db.Model):
+    """Entity Stores all attributes of comments (written on blog posts)."""
+
     content = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
@@ -304,6 +318,8 @@ class Comment(db.Model):
 
 
 class Likez(db.Model):
+    """Entity Stores all attributes of 'Likes' for blog posts."""
+
     does_like = db.BooleanProperty(required = True) #I need a True / False Value..., then I'll need to count up the "True's"
     created = db.DateTimeProperty(auto_now_add = True)
     last_modified = db.DateTimeProperty(auto_now = True)
@@ -313,6 +329,7 @@ class Likez(db.Model):
 
 
 class PostPage(Handler):
+    """Displays individual posts with corresponding comments & 'Likes'."""
 
     def get(self, post_id):
         key = db.Key.from_path("Post", int(post_id))
@@ -422,6 +439,7 @@ class PostPage(Handler):
 
 
 class EditPage(Handler):
+    """Allows user to edit a post they've created"""
 
     def get(self, post_id):
         uname = self.identify()

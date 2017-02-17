@@ -10,6 +10,7 @@
         </div>
         <hr>
         <div class="post-subject"><b>{{post.subject | safe}}</b></div>
+        <br>
         <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
         <br>
         <div class="post-likes">Likes: {{count}}</div>

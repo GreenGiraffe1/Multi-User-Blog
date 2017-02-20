@@ -617,4 +617,4 @@ app = webapp2.WSGIApplication([("/", MainPage),
                                ("/blog/([0-9]+)", PostPage),
                                ("/blog/edit/([0-9]+)", EditPage),
                                ],
-                                debug=True)
+                              debug=True)

@@ -59,17 +59,17 @@ def valid_email(email):
 
 
 def hash_str(s):
-    """Hashes the user_id and SECRET (a constant) to create a cookie hash."""
+    """Hash the user_id and SECRET (a constant) to create a cookie hash."""
     return hmac.new(SECRET, s).hexdigest()
 
 
 def make_secure_val(s):
-    """user_id is input, it returns the value to set for the cookie."""
+    """When user_id is input, it return the value to set for the cookie."""
     return "%s|%s" % (s, hash_str(s))
 
 
 def check_secure_val(h):
-    """Checks whether the cookie value from the current webpage is valid."""
+    """Check whether the cookie value from the current webpage is valid."""
     if h:
         val = h.split("|")[0]
         if h == make_secure_val(val):
@@ -77,12 +77,12 @@ def check_secure_val(h):
 
 
 def make_salt(length=5):
-    """Creates a unique salt for hashing a user's password during signup."""
+    """Create a unique salt for hashing a user's password during signup."""
     return "".join(random.choice(letters) for x in xrange(length))
 
 
 def make_pw_hash(name, pw, salt=None):
-    """Makes password hash on signup, or checks password hash on login."""
+    """Make password hash on signup, or check password hash on login."""
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(name + pw + salt).hexdigest()  # sha256 hash algorithm
@@ -90,14 +90,14 @@ def make_pw_hash(name, pw, salt=None):
 
 
 def valid_pw(name, password, h):
-    """Checks hash of user's login against value in the Credential entity."""
+    """Check hash of user's login against value in the Credential entity."""
     salt = h.split("|")[0]
     return h == make_pw_hash(name, password, salt)
 
 
 class Handler(webapp2.RequestHandler):
 
-    """Parent Handler of all other Handlers. Handles user interaction."""
+    """Handle user interaction. (Parent Handler of all other Handlers.)"""
 
     def write(self, *a, **kw):
         """Write text/elements to HTML page"""
@@ -154,7 +154,7 @@ class Handler(webapp2.RequestHandler):
 
 class Credential(db.Model):
 
-    """Entity stores all attributes of user login credentials."""
+    """Store all attributes of user login credentials in this entity."""
 
     username = db.StringProperty(required=True)
     email = db.StringProperty(required=False)
@@ -163,7 +163,7 @@ class Credential(db.Model):
 
 class Post(db.Model):
 
-    """Entity Stores all attributes of blog posts."""
+    """Store all attributes of blog posts in this entity."""
 
     subject = db.StringProperty(required=True)
     content = db.TextProperty(required=True)
@@ -175,7 +175,7 @@ class Post(db.Model):
 
 class Signup(Handler):
 
-    """Handles user input and errors on the signup webpage, sets cookies."""
+    """Handle user input and errors on the signup webpage, set cookies."""
 
     def get(self):
         """Render signup page."""
@@ -272,7 +272,7 @@ class Login(Handler):
 
 class Logout(Handler):
 
-    """Logs a user out by reseting cookies. (No webpage / user interface)."""
+    """Log a user out by reseting cookies. (No webpage / user interface)."""
 
     def get(self):
         """Log user out by setting cookie values to ''."""
@@ -340,7 +340,7 @@ class NewPost(Handler):
 
 class Blog(Handler):
 
-    """Displays 10 most recent posts from Post entity on main blog page."""
+    """Display 10 most recent posts from Post entity on main blog page."""
 
     def render_fpage(self):
         """Display the main blog page.
@@ -417,12 +417,12 @@ class PostPage(Handler):
         If the visitor is not logged in they will only see the post, 'Likes'
         and comments, but not the editing options.
 
-        If a user is logged in they will see buttons allowing them to edit or
+        If a user is logged in show buttons allowing them to edit or
         delete posts they have created, and comments they have created.
         Display a button to 'Like' the post if they haven't 'Liked' it yet, or
         an 'Unlike' button if they have.
 
-        These permissions will be determined by comparing their user_id
+        Determine these permissions by comparing their user_id
         (stored in a cookie) with the user_id of the post and comment
         creators.
 
@@ -461,7 +461,7 @@ class PostPage(Handler):
         them to the login page upon them sending requests to the server
         for 'Liking' or commenting posts.
 
-        Logged in users can comment on posts, and 'Like' or 'Unlike' posts
+        Allow logged in users to comment on post, and 'Like' or 'Unlike' post
         by clicking the appropriate buttons, which will send info to the
         server and in some cases modify the Comment or Likez entities
         where those items are held.
@@ -575,7 +575,7 @@ class PostPage(Handler):
 
 class EditPage(Handler):
 
-    """Allows user to edit a post they've created."""
+    """Allow user to edit a post they've created."""
 
     def get(self, post_id):
         """Render page where a poster can edit post, post_id passed in URL."""

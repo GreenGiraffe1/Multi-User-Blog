@@ -4,7 +4,7 @@ This document, the HTML pages, and the database entities are stored / hosted
 by Google App Engine. This module supports registration, login, and logging
 out with password hashing and secure cookies. Logged in users may create blog
 posts, comment on posts, like other's posts, and delete or edit their own blog
-posts,or comments.
+posts or comments.
 
 """
 
@@ -29,28 +29,30 @@ from google.appengine.ext import db
 # In the future I'll store them in a seperate folder with the following code:
 # template_dir = os.path.join(os.path.dirname(__file__, "templates"))
 template_dir = os.path.join(os.path.dirname(__file__))
-jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
-                               autoescape = True)
+jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
+                               autoescape=True)
 
 
 # value to hash with cookie values to make them secure. (normally this would be
 # held in another secure module, but is here for ease of learning.)
 SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"
 
-
+# REGEX to validate user registration inputs
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+PASSWORD_RE = re.compile(r"^.{3,20}$")
+EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
+
+
 def valid_username(username):
     """Check username entered to determine if it's valid (with REGEX)."""
     return USER_RE.match(username)
 
 
-PASSWORD_RE = re.compile(r"^.{3,20}$")
 def valid_password(password):
     """Check password entered to determine if it's valid (with REGEX)."""
     return PASSWORD_RE.match(password)
 
 
-EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
 def valid_email(email):
     """Check email entered to determine if it's valid (with REGEX)."""
     return EMAIL_RE.match(email)
@@ -58,7 +60,7 @@ def valid_email(email):
 
 def hash_str(s):
     """Hashes the user_id and SECRET (a constant) to create a cookie hash."""
-    return hmac.new(SECRET,s).hexdigest()
+    return hmac.new(SECRET, s).hexdigest()
 
 
 def make_secure_val(s):
@@ -74,17 +76,17 @@ def check_secure_val(h):
             return val
 
 
-def make_salt(length = 5):
+def make_salt(length=5):
     """Creates a unique salt for hashing a user's password during signup."""
     return "".join(random.choice(letters) for x in xrange(length))
 
 
-def make_pw_hash(name, pw, salt = None):
+def make_pw_hash(name, pw, salt=None):
     """Makes password hash on signup, or checks password hash on login."""
     if not salt:
         salt = make_salt()
     h = hashlib.sha256(name + pw + salt).hexdigest()  # sha256 hash algorithm
-    return "%s|%s" % (salt,h)
+    return "%s|%s" % (salt, h)
 
 
 def valid_pw(name, password, h):
@@ -114,7 +116,7 @@ class Handler(webapp2.RequestHandler):
         """Create and set secure cookie upon login or signup"""
         cookie_val = make_secure_val(val)
         self.response.headers.add_header("Set-Cookie",
-                        "%s=%s; Path=/" % (name, cookie_val))
+                                         "%s=%s; Path=/" % (name, cookie_val))
 
     def read_secure_cookie(self, name):
         """Verify that inputed cookie is secure/ hasn't been modified."""
@@ -130,7 +132,19 @@ class Handler(webapp2.RequestHandler):
         self.response.headers.add_header("Set-Cookie", "user_id=; Path=/")
 
     def identify(self):
-        """Read cookie 'user', and return the 'name' value if secure"""
+        """Read cookie 'user', and return the 'name' value if secure.
+
+        All classes employ this method, and often use it to determine the
+        user's identity, and what permissions to grant them.
+
+        All webpages use the result of this method in determining which HTML
+        header code to display to the user / visitor. If the method returns
+        any result other than 'None' that means the user is logged in, and the
+        page displays the user's name, and the option to logout. If it returns
+        'None' that means the visitor isn't logged in, and therefore it asks
+        them to login or register.
+
+        """
         if self.read_secure_cookie("user"):
             uname = self.read_secure_cookie("user").split("|")[0]
         else:
@@ -142,21 +156,21 @@ class Credential(db.Model):
 
     """Entity stores all attributes of user login credentials."""
 
-    username = db.StringProperty(required = True)
-    email = db.StringProperty(required = False)
-    hashed_password = db.TextProperty(required = True)
+    username = db.StringProperty(required=True)
+    email = db.StringProperty(required=False)
+    hashed_password = db.TextProperty(required=True)
 
 
 class Post(db.Model):
 
     """Entity Stores all attributes of blog posts."""
 
-    subject = db.StringProperty(required = True)
-    content = db.TextProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
-    last_modified = db.DateTimeProperty(auto_now = True)
-    creator = db.StringProperty(required = False)
-    name = db.StringProperty(required = False)
+    subject = db.StringProperty(required=True)
+    content = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    last_modified = db.DateTimeProperty(auto_now=True)
+    creator = db.StringProperty(required=False)
+    name = db.StringProperty(required=False)
 
 
 class Signup(Handler):
@@ -183,8 +197,7 @@ class Signup(Handler):
         verify = self.request.get("verify")
         email = self.request.get("email")
         # params dictionary used for error handling
-        params = dict(username = username,
-                      email = email, uname=uname)
+        params = dict(username=username, email=email, uname=uname)
         have_error = False
         if not valid_username(username):
             params["error_username"] = "That's not a valid username."
@@ -245,9 +258,9 @@ class Login(Handler):
         self.query = Credential.all()
         for self.credential in self.query:
             if self.credential.username == username and valid_pw(username,
-                        password, self.credential.hashed_password):
+                           password, self.credential.hashed_password):
                 self.response.headers.add_header("Set-Cookie",
-                        "user=%s; Path=/" % str(make_secure_val(username)))
+                           "user=%s; Path=/" % str(make_secure_val(username)))
                 u = self.credential
                 self.login(u)  # set secure "user_id" cookie
                 proceed = True
@@ -283,10 +296,10 @@ class NewPost(Handler):
 
     """Accept user input of a blog post, and save it in the Post entity."""
 
-    def render_newpost(self, subject="" ,content="", error=""):
+    def render_newpost(self, subject="", content="", error=""):
         """Render newpost page where user can create blog posts."""
         uname = self.identify()
-        self.render("newpost.html",subject=subject, content=content,
+        self.render("newpost.html", subject=subject, content=content,
                     error=error)
 
     def get(self):
@@ -306,8 +319,8 @@ class NewPost(Handler):
         """
         subject = self.request.get("subject")
         content = self.request.get("content")
-        if (subject and content and self.read_secure_cookie("user")
-                        and self.read_secure_cookie("user_id")):
+        if (subject and content and self.read_secure_cookie("user") and
+                        self.read_secure_cookie("user_id")):
             name1 = self.request.cookies.get("user")
             name = name1.split("|")[0]
             creator1 = self.request.cookies.get("user_id")
@@ -355,7 +368,7 @@ class Blog(Handler):
         visitor is not logged in redirect them to the the login page.
 
         """
-        uname=self.identify()
+        uname = self.identify()
         if self.request.get("create-post") and uname:
             self.redirect("/blog/newpost")
         elif self.request.get("create-post") and not uname:
@@ -366,25 +379,25 @@ class Comment(db.Model):
 
     """Store all attributes of comments (written on blog posts)."""
 
-    content = db.TextProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
-    last_modified = db.DateTimeProperty(auto_now = True)
-    creator = db.StringProperty(required = True)
-    name = db.StringProperty(required = False)
-    post_id = db.StringProperty(required = True)
-    mod = db.BooleanProperty(required = False)
+    content = db.TextProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    last_modified = db.DateTimeProperty(auto_now=True)
+    creator = db.StringProperty(required=True)
+    name = db.StringProperty(required=False)
+    post_id = db.StringProperty(required=True)
+    mod = db.BooleanProperty(required=False)
 
 
 class Likez(db.Model):
 
     """Store all attributes of 'Likes' for blog posts."""
 
-    does_like = db.BooleanProperty(required = True)
-    created = db.DateTimeProperty(auto_now_add = True)
-    last_modified = db.DateTimeProperty(auto_now = True)
-    creator = db.StringProperty(required = True)
-    name = db.StringProperty(required = False)
-    post_id = db.StringProperty(required = True)
+    does_like = db.BooleanProperty(required=True)
+    created = db.DateTimeProperty(auto_now_add=True)
+    last_modified = db.DateTimeProperty(auto_now=True)
+    creator = db.StringProperty(required=True)
+    name = db.StringProperty(required=False)
+    post_id = db.StringProperty(required=True)
 
 
 class PostPage(Handler):
@@ -401,8 +414,8 @@ class PostPage(Handler):
         respectively. Display only the objects that match the current post's
         Post id.
 
-        If the visitor is not logged in they will only see the post, 'Likes' and
-        comments, but not the editing options.
+        If the visitor is not logged in they will only see the post, 'Likes'
+        and comments, but not the editing options.
 
         If a user is logged in they will see buttons allowing them to edit or
         delete posts they have created, and comments they have created.
@@ -426,14 +439,14 @@ class PostPage(Handler):
             self.error(404)
             return
         likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
-        count = 0  # This counts the number of likes for this post from the database.
+        count = 0  # Count the number of likes for post from the database.
         for likey in likez:
-            if likey.does_like and likey.post_id == post_id: # Second condition is if the ID matches..
+            if likey.does_like and likey.post_id == post_id:
                 count = count + 1
         display = "like"
         for li in likez:
-            if (li.post_id == post_id and li.creator == current_user
-                            and li.does_like):
+            if (li.post_id == post_id and li.creator == current_user and
+                            li.does_like):
                 display = "unlike"
         self.query = Comment.all().order("-created")
         self.render("permalink.html", post=post, current_user=current_user,
@@ -570,7 +583,7 @@ class EditPage(Handler):
         # Retrieve object key with entity name and attribute id number
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
-        self.render("edit.html", post=post, uname=uname)#, display="NoShow")
+        self.render("edit.html", post=post, uname=uname)
 
     def post(self, post_id):
         """Accept user input and save or cancel editing accordingly.
@@ -603,5 +616,5 @@ app = webapp2.WSGIApplication([("/", MainPage),
                                ("/blog/newpost", NewPost),
                                ("/blog/([0-9]+)", PostPage),
                                ("/blog/edit/([0-9]+)", EditPage),
-                                ],
+                               ],
                                 debug=True)

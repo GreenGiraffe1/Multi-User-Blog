@@ -403,6 +403,11 @@ class Blog(Handler):
 #     post_id = db.StringProperty(required=True)
 
 
+
+
+
+
+
 class PostPage(Handler):
 
     """Display individual posts with corresponding comments & 'Likes'."""
@@ -494,26 +499,30 @@ class PostPage(Handler):
         else:
             current_user = None
             current_name = None
-        if self.request.get("like1") and uname:
-            # User clicked "Like", store it in the Likez entity
-            l = Likez(creator=current_user, name=current_name,
-                      post_id=post_id, does_like=True)
-            l.put()  # sends Likez object "l" to the GAE datastore
-            sleep(.2)
-        elif self.request.get("like1") and not uname:
-            have_error = True
-        if self.request.get("unlike"):
-            # User clicked "Unlike" button, remove this "Like" object from
-            # the Likez entity
-            # GQL query the Google App Engine (GAE) datastore, Likez entity
-            likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
-            delkey = None
-            for likey in likez:
-                if likey.creator == current_user and likey.does_like:
-                    delkey = likey.key()
-            if delkey:
-                db.delete(delkey)  # Deletes the "Like"
-                sleep(.2)
+###############################################################################
+                        ##    Like Section      ##
+###############################################################################
+        # if self.request.get("like1") and uname:
+        #     # User clicked "Like", store it in the Likez entity
+        #     l = Likez(creator=current_user, name=current_name,
+        #               post_id=post_id, does_like=True)
+        #     l.put()  # sends Likez object "l" to the GAE datastore
+        #     sleep(.2)
+        # elif self.request.get("like1") and not uname:
+        #     have_error = True
+        # if self.request.get("unlike"):
+        #     # User clicked "Unlike" button, remove this "Like" object from
+        #     # the Likez entity
+        #     # GQL query the Google App Engine (GAE) datastore, Likez entity
+        #     likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
+        #     delkey = None
+        #     for likey in likez:
+        #         if likey.creator == current_user and likey.does_like:
+        #             delkey = likey.key()
+        #     if delkey:
+        #         db.delete(delkey)  # Deletes the "Like"
+        #         sleep(.2)
+###############################################################################
         if self.request.get("edit_c"):
             # User clicked "edit comment" button, set value of comment.mod to
             # True
@@ -576,6 +585,56 @@ class PostPage(Handler):
             self.redirect("/blog/%s" % str(post_id))
 
 
+
+class LikePost(Handler):
+
+    """Do the 'Like' Functionality."""
+
+    def get(self, post_id):
+        # uname = self.identify()
+        if self.read_secure_cookie("user_id"):
+            current_user = (self.request.cookies.get("user_id")).split("|")[0]
+            current_name = (self.request.cookies.get("user")).split("|")[0]
+        # else:
+        #     current_user = None
+        #     current_name = None
+        # if uname:
+            l = Likez(creator=current_user, name=current_name,
+                      post_id=post_id, does_like=True)
+            l.put()  # sends Likez object "l" to the GAE datastore
+            sleep(.2)
+            self.redirect("/blog/%s" % str(post_id))
+        else:
+            self.redirect("/blog/login")
+
+class UnlikePost(Handler):
+
+    """Do the 'Unlike' Functionality."""
+
+    def get(self, post_id):
+        if self.read_secure_cookie("user_id"):
+            current_user = (self.request.cookies.get("user_id")).split("|")[0]
+            current_name = (self.request.cookies.get("user")).split("|")[0]
+            likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
+            delkey = None
+            for likey in likez:
+                if likey.creator == current_user and likey.does_like:
+                    delkey = likey.key()
+            if delkey:
+                db.delete(delkey)  # Deletes the "Like"
+                sleep(.2)
+                self.redirect("/blog/%s" % str(post_id))
+            else:
+                self.redirect("/blog/%s" % str(post_id))
+        else:
+            self.redirect("/blog/login")
+
+
+
+
+
+
+
 class EditPage(Handler):
 
     """Allow user to edit a post they've created."""
@@ -618,6 +677,8 @@ app = webapp2.WSGIApplication([("/", MainPage),
                                ("/blog", Blog),
                                ("/blog/newpost", NewPost),
                                ("/blog/([0-9]+)", PostPage),
+                               ("/blog/unlike/([0-9]+)", UnlikePost),
+                               ("/blog/like/([0-9]+)", LikePost),
                                ("/blog/edit/([0-9]+)", EditPage),
                                ],
                               debug=True)

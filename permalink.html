@@ -22,12 +22,17 @@
                     <button type="submit" name="delete_p" value="{{post.key()}}">Delete</button>
                 </form>
             {% elif current_user != post.creator and display == 'like' %}
-                <form class="like" method="post">
-                    <button type="submit" name="like1" value="True">Like!</button>
+                <form class="like" action="/blog/like/{{post.key().id()}}">
+                    <button type="submit" name="like1">Like!</button>
+                    <!-- <a href="/blog/like/{{post.key().id()}}">Like!!</a> -->
                 </form>
             {% elif current_user != post.creator and display == 'unlike' %}
-                <form class="like" method="post">
+                <!-- <form class="like" method="post">
                     <button type="submit" name="unlike" value="True">Unlike</button>
+                </form> -->
+                <form class="like" action="/blog/unlike/{{post.key().id()}}">
+                    <button type="submit" name="unlike">Unlike</button>
+                    <!-- <a href="/blog/like/{{post.key().id()}}">Like!!</a> -->
                 </form>
             {% endif %}
         <form class="comment" method="post">

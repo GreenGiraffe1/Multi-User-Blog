@@ -20,7 +20,9 @@ from time import sleep
 import webapp2
 import jinja2
 from google.appengine.ext import db
-from models import Credential, Post, Comment, Likez
+# from models import Credential, Post, Comment, Likez
+# import modelz
+from modelz import Credential, Post, Comment, Likez
 
 
 # The following 2 lines of code create the template directory, and create an

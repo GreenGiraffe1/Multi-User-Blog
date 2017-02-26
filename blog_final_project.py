@@ -448,64 +448,6 @@ class PostPage(Handler):
         else:
             current_user = None
             current_name = None
-###############################################################################
-                        ##    Like Section      ##
-###############################################################################
-        # if self.request.get("like1") and uname:
-        #     # User clicked "Like", store it in the Likez entity
-        #     l = Likez(creator=current_user, name=current_name,
-        #               post_id=post_id, does_like=True)
-        #     l.put()  # sends Likez object "l" to the GAE datastore
-        #     sleep(.2)
-        # elif self.request.get("like1") and not uname:
-        #     have_error = True
-        # if self.request.get("unlike"):
-        #     # User clicked "Unlike" button, remove this "Like" object from
-        #     # the Likez entity
-        #     # GQL query the Google App Engine (GAE) datastore, Likez entity
-        #     likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
-        #     delkey = None
-        #     for likey in likez:
-        #         if likey.creator == current_user and likey.does_like:
-        #             delkey = likey.key()
-        #     if delkey:
-        #         db.delete(delkey)  # Deletes the "Like"
-        #         sleep(.2)
-###############################################################################
-
-
-###############################################################################
-                    ##    Edit Comment Section      ##
-###############################################################################
-        # if self.request.get("edit_c"):
-        #     # User clicked "edit comment" button, set value of comment.mod to
-        #     # True
-        #     ckey = self.request.get("edit_c")
-        #     e = db.get(ckey)
-        #     e.mod = True
-        #     e.put()  # sends updated Comment object "e" to the GAE datastore
-        #     sleep(.2)
-        #
-        # if self.request.get("update_c"):
-        #     # User submitted the updated comment, update value of
-        #     # comment.content in Comment entity and reset the value of
-        #     # comment.mod to False
-        #     ucom = self.request.get("updated_comment")
-        #     ukey = self.request.get("update_c")
-        #     u = db.get(ukey)
-        #     u.content = ucom
-        #     u.mod = False
-        #     u.put()  # sends updated Comment object "u" to the GAE datastore
-        #     sleep(.2)
-        # if self.request.get("cancel_u_c"):
-        #     # User canceled updating the comment, reset the value of
-        #     # comment.mod to False
-        #     cankey = self.request.get("cancel_u_c")
-        #     can = db.get(cankey)
-        #     can.mod = False
-        #     can.put()
-        #     sleep(.2)
-###############################################################################
 
         if self.request.get("delete_c"):
             # User clicked "delete comment" button, remove comment object from
@@ -533,8 +475,6 @@ class PostPage(Handler):
             sleep(.2)
         if delete_post:
             self.redirect("/blog")
-        elif edit_post:
-            self.redirect("/blog/edit/%s" % str(post_id))
         elif have_error:
             self.redirect("/blog/login")
         else:

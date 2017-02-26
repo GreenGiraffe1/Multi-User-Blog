@@ -434,7 +434,6 @@ class PostPage(Handler):
         user has sent to the server, and takes the appropriate action.
 
         """
-        uname = self.identify()
         have_error = False
         delete_post = False
         edit_post = False
@@ -449,40 +448,26 @@ class PostPage(Handler):
             current_user = None
             current_name = None
 
-
-        # if self.request.get("delete_c"):
-        #     # User clicked "delete comment" button, remove comment object from
-        #     # Comment entity
-        #     dd_key = self.request.get("delete_c")
-        #     db.delete(dd_key)
-        #     sleep(.2)
-
-
-
-        if self.request.get("delete_p"):
-            # User clicked "delete post" button, remove Post object from
-            # Post entity
-            dpk = self.request.get("delete_p")
-            db.delete(dpk)  # Deletes post based on its key
-            delete_post = True
-            sleep(.2)
-        # if self.request.get("edit_p"):
-        #     # User clicked "edit post" button, edit_post flag will redirect
-        #     # user to the editing page
-        #     epk = self.request.get("edit_p")
-        #     edit_post = True
-        if comment and uname:
+        if comment and current_user:
             # User submitted new comment, save it in the Comment entity
             c = Comment(content=comment, name=current_name,
                         creator=current_user, post_id=post_id)
             c.put()  # sends Comment object "c" to the GAE datastore
             sleep(.2)
-        if delete_post:
-            self.redirect("/blog")
-        elif have_error:
-            self.redirect("/blog/login")
+
+        # elif have_error:
+        #     self.redirect("/blog/login")
         else:
             self.redirect("/blog/%s" % str(post_id))
+
+
+class DeletePost(Handler):
+
+    def get(self, post_id):
+        key = db.Key.from_path("Post", int(post_id))
+        db.delete(key)
+        sleep(.2)
+        self.redirect("/blog")
 
 
 class DeleteComment(Handler):
@@ -618,5 +603,6 @@ app = webapp2.WSGIApplication([("/", MainPage),
                                ("/blog/edit/([0-9]+)", EditPage),
                                ("/blog/editcomment/([0-9]+)", EditComment),
                                ("/blog/deletecomment/([0-9]+)", DeleteComment),
+                               ("/blog/deletepost/([0-9]+)", DeletePost),
                                ],
                               debug=True)

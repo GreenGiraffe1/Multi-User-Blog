@@ -21,8 +21,11 @@
                 <form class="post_manip" action="/blog/edit/{{post.key().id()}}">
                     <button type="submit">Edit!</button>
                 </form>
-                <form class="post-manip" method="post">
+                <!-- <form class="post-manip" method="post">
                     <button type="submit" name="delete_p" value="{{post.key()}}">Delete</button>
+                </form> -->
+                <form class="post_manip" action="/blog/deletepost/{{post.key().id()}}">
+                    <button type="submit">Delete!</button>
                 </form>
             {% elif current_user != post.creator and display == 'like' %}
                 <form class="like" action="/blog/like/{{post.key().id()}}">

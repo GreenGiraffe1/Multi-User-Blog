@@ -155,27 +155,6 @@ class Handler(webapp2.RequestHandler):
         return uname
 
 
-# class Credential(db.Model):
-#
-#     """Store all attributes of user login credentials in this entity."""
-#
-#     username = db.StringProperty(required=True)
-#     email = db.StringProperty(required=False)
-#     hashed_password = db.TextProperty(required=True)
-#
-#
-# class Post(db.Model):
-#
-#     """Store all attributes of blog posts in this entity."""
-#
-#     subject = db.StringProperty(required=True)
-#     content = db.TextProperty(required=True)
-#     created = db.DateTimeProperty(auto_now_add=True)
-#     last_modified = db.DateTimeProperty(auto_now=True)
-#     creator = db.StringProperty(required=False)
-#     name = db.StringProperty(required=False)
-
-
 class Signup(Handler):
 
     """Handle user input and errors on the signup webpage, set cookies."""
@@ -378,36 +357,6 @@ class Blog(Handler):
             self.redirect("/blog/login")
 
 
-# class Comment(db.Model):
-#
-#     """Store all attributes of comments (written on blog posts)."""
-#
-#     content = db.TextProperty(required=True)
-#     created = db.DateTimeProperty(auto_now_add=True)
-#     last_modified = db.DateTimeProperty(auto_now=True)
-#     creator = db.StringProperty(required=True)
-#     name = db.StringProperty(required=False)
-#     post_id = db.StringProperty(required=True)
-#     mod = db.BooleanProperty(required=False)
-#
-#
-# class Likez(db.Model):
-#
-#     """Store all attributes of 'Likes' for blog posts."""
-#
-#     does_like = db.BooleanProperty(required=True)
-#     created = db.DateTimeProperty(auto_now_add=True)
-#     last_modified = db.DateTimeProperty(auto_now=True)
-#     creator = db.StringProperty(required=True)
-#     name = db.StringProperty(required=False)
-#     post_id = db.StringProperty(required=True)
-
-
-
-
-
-
-
 class PostPage(Handler):
 
     """Display individual posts with corresponding comments & 'Likes'."""
@@ -523,34 +472,41 @@ class PostPage(Handler):
         #         db.delete(delkey)  # Deletes the "Like"
         #         sleep(.2)
 ###############################################################################
-        if self.request.get("edit_c"):
-            # User clicked "edit comment" button, set value of comment.mod to
-            # True
-            ckey = self.request.get("edit_c")
-            e = db.get(ckey)
-            e.mod = True
-            e.put()  # sends updated Comment object "e" to the GAE datastore
-            sleep(.2)
 
-        if self.request.get("update_c"):
-            # User submitted the updated comment, update value of
-            # comment.content in Comment entity and reset the value of
-            # comment.mod to False
-            ucom = self.request.get("updated_comment")
-            ukey = self.request.get("update_c")
-            u = db.get(ukey)
-            u.content = ucom
-            u.mod = False
-            u.put()  # sends updated Comment object "u" to the GAE datastore
-            sleep(.2)
-        if self.request.get("cancel_u_c"):
-            # User canceled updating the comment, reset the value of
-            # comment.mod to False
-            cankey = self.request.get("cancel_u_c")
-            can = db.get(cankey)
-            can.mod = False
-            can.put()
-            sleep(.2)
+
+###############################################################################
+                    ##    Edit Comment Section      ##
+###############################################################################
+        # if self.request.get("edit_c"):
+        #     # User clicked "edit comment" button, set value of comment.mod to
+        #     # True
+        #     ckey = self.request.get("edit_c")
+        #     e = db.get(ckey)
+        #     e.mod = True
+        #     e.put()  # sends updated Comment object "e" to the GAE datastore
+        #     sleep(.2)
+        #
+        # if self.request.get("update_c"):
+        #     # User submitted the updated comment, update value of
+        #     # comment.content in Comment entity and reset the value of
+        #     # comment.mod to False
+        #     ucom = self.request.get("updated_comment")
+        #     ukey = self.request.get("update_c")
+        #     u = db.get(ukey)
+        #     u.content = ucom
+        #     u.mod = False
+        #     u.put()  # sends updated Comment object "u" to the GAE datastore
+        #     sleep(.2)
+        # if self.request.get("cancel_u_c"):
+        #     # User canceled updating the comment, reset the value of
+        #     # comment.mod to False
+        #     cankey = self.request.get("cancel_u_c")
+        #     can = db.get(cankey)
+        #     can.mod = False
+        #     can.put()
+        #     sleep(.2)
+###############################################################################
+
         if self.request.get("delete_c"):
             # User clicked "delete comment" button, remove comment object from
             # Comment entity
@@ -583,6 +539,28 @@ class PostPage(Handler):
             self.redirect("/blog/login")
         else:
             self.redirect("/blog/%s" % str(post_id))
+
+
+class EditComment(Handler):
+
+    def get(self, post_id):
+        uname = self.identify()
+        # Retrieve object key with entity name and attribute id number
+        key = db.Key.from_path("Comment", int(post_id))
+        comment = db.get(key)
+        self.render("editcomment.html", comment=comment, uname=uname)
+
+
+    def post(self, post_id):
+        key = db.Key.from_path("Comment", int(post_id))
+        comment = db.get(key)
+        update_c_text = self.request.get("comment_update")
+        if update_c_text:
+            comment.content = update_c_text
+            comment.put()  # sends updated Post object "post" to GAE datastore
+            sleep(.2)
+        self.redirect("/blog/%s" % str(comment.post_id))
+
 
 
 
@@ -680,5 +658,6 @@ app = webapp2.WSGIApplication([("/", MainPage),
                                ("/blog/unlike/([0-9]+)", UnlikePost),
                                ("/blog/like/([0-9]+)", LikePost),
                                ("/blog/edit/([0-9]+)", EditPage),
+                               ("/blog/editcomment/([0-9]+)", EditComment),
                                ],
                               debug=True)

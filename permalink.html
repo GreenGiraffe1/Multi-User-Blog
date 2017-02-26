@@ -55,8 +55,12 @@
                 <div class="comment-content">{{cm.content.replace('\n', '<br>') | safe}}</div>
                 <div class="comment-author">By: {{cm.name}}</div>
                     {% if current_user == cm.creator and not cm.mod %}
-                        <form class="com_manip" method="post">
+                        <!-- <form class="com_manip" method="post">
                             <button type="submit" name="edit_c" value="{{cm.key()}}">Edit</button>
+                        </form> -->
+                        <form class="com_manip" action="/blog/editcomment/{{cm.key().id()}}">
+                            <button type="submit">Edit!</button>
+                            <!-- <a href="/blog/like/{{post.key().id()}}">Like!!</a> -->
                         </form>
                         <form class="com_manip" method="post">
                             <button type="submit" name="delete_c" value="{{cm.key()}}">Delete</button>

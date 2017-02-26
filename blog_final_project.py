@@ -450,12 +450,12 @@ class PostPage(Handler):
             current_name = None
 
 
-        if self.request.get("delete_c"):
-            # User clicked "delete comment" button, remove comment object from
-            # Comment entity
-            dd_key = self.request.get("delete_c")
-            db.delete(dd_key)
-            sleep(.2)
+        # if self.request.get("delete_c"):
+        #     # User clicked "delete comment" button, remove comment object from
+        #     # Comment entity
+        #     dd_key = self.request.get("delete_c")
+        #     db.delete(dd_key)
+        #     sleep(.2)
 
 
 

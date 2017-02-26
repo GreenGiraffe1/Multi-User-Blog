@@ -60,7 +60,6 @@
                         </form> -->
                         <form class="com_manip" action="/blog/editcomment/{{cm.key().id()}}">
                             <button type="submit">Edit!</button>
-                            <!-- <a href="/blog/like/{{post.key().id()}}">Like!!</a> -->
                         </form>
                         <!-- <form class="com_manip" method="post">
                             <button type="submit" name="delete_c" value="{{cm.key()}}">Delete</button>
@@ -69,7 +68,7 @@
                             <button type="submit">Delete!</button>
                         </form>
                     {% endif %}
-                {% elif cm.post_id ==cur_post_id and current_user == cm.creator and cm.mod %}
+                <!-- {% elif cm.post_id ==cur_post_id and current_user == cm.creator and cm.mod %}
                     <form class="comment-edit" method="post">
                         Edit Your Comment:
                         <br>
@@ -78,7 +77,7 @@
                         <button type="submit" name="update_c" value="{{cm.key()}}">Save</button>
                         <button type="submit" action="/blog/{{cm.key().id()}}" name="cancel_u_c" value="{{cm.key()}}">Cancel</button>
                     </form>
-                <br>
+                <br> -->
                 {% endif %}
                 <br>
             {% endfor %}

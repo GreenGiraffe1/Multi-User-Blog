@@ -286,7 +286,11 @@ class NewPost(Handler):
 
     def get(self):
         """Call method that renders the newpost page."""
-        self.render_newpost()
+
+        if self.read_secure_cookie("user_id"):
+            self.render_newpost()
+        else:
+            self.redirect("/blog/login")
 
     def post(self):
         """Coditionally create new blog posts.
@@ -342,19 +346,19 @@ class Blog(Handler):
         """Call function that renders the main blog page."""
         self.render_fpage()
 
-    def post(self):
-        """Allow users to proceed to newpost page if logged in.
-
-        If a user is logged in, upon clicking the 'Create New Post' button
-        load the newpost page where they can create a new blog post. If the
-        visitor is not logged in redirect them to the the login page.
-
-        """
-        uname = self.identify()
-        if self.request.get("create-post") and uname:
-            self.redirect("/blog/newpost")
-        elif self.request.get("create-post") and not uname:
-            self.redirect("/blog/login")
+    # def post(self):
+    #     """Allow users to proceed to newpost page if logged in.
+    #
+    #     If a user is logged in, upon clicking the 'Create New Post' button
+    #     load the newpost page where they can create a new blog post. If the
+    #     visitor is not logged in redirect them to the the login page.
+    #
+    #     """
+    #     uname = self.identify()
+    #     if self.request.get("create-post") and uname:
+    #         self.redirect("/blog/newpost")
+    #     elif self.request.get("create-post") and not uname:
+    #         self.redirect("/blog/login")
 
 
 class PostPage(Handler):
@@ -447,16 +451,12 @@ class PostPage(Handler):
         else:
             current_user = None
             current_name = None
-
         if comment and current_user:
             # User submitted new comment, save it in the Comment entity
             c = Comment(content=comment, name=current_name,
                         creator=current_user, post_id=post_id)
             c.put()  # sends Comment object "c" to the GAE datastore
             sleep(.2)
-
-        # elif have_error:
-        #     self.redirect("/blog/login")
         else:
             self.redirect("/blog/%s" % str(post_id))
 
@@ -481,9 +481,6 @@ class DeleteComment(Handler):
         self.redirect("/blog/%s" % str(post))
 
 
-
-
-
 class EditComment(Handler):
 
     def get(self, post_id):
@@ -492,7 +489,6 @@ class EditComment(Handler):
         key = db.Key.from_path("Comment", int(post_id))
         comment = db.get(key)
         self.render("editcomment.html", comment=comment, uname=uname)
-
 
     def post(self, post_id):
         key = db.Key.from_path("Comment", int(post_id))
@@ -503,8 +499,6 @@ class EditComment(Handler):
             comment.put()  # sends updated Post object "post" to GAE datastore
             sleep(.2)
         self.redirect("/blog/%s" % str(comment.post_id))
-
-
 
 
 class LikePost(Handler):
@@ -549,11 +543,6 @@ class UnlikePost(Handler):
                 self.redirect("/blog/%s" % str(post_id))
         else:
             self.redirect("/blog/login")
-
-
-
-
-
 
 
 class EditPage(Handler):

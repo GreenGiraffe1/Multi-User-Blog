@@ -346,20 +346,6 @@ class Blog(Handler):
         """Call function that renders the main blog page."""
         self.render_fpage()
 
-    # def post(self):
-    #     """Allow users to proceed to newpost page if logged in.
-    #
-    #     If a user is logged in, upon clicking the 'Create New Post' button
-    #     load the newpost page where they can create a new blog post. If the
-    #     visitor is not logged in redirect them to the the login page.
-    #
-    #     """
-    #     uname = self.identify()
-    #     if self.request.get("create-post") and uname:
-    #         self.redirect("/blog/newpost")
-    #     elif self.request.get("create-post") and not uname:
-    #         self.redirect("/blog/login")
-
 
 class PostPage(Handler):
 
@@ -438,9 +424,6 @@ class PostPage(Handler):
         user has sent to the server, and takes the appropriate action.
 
         """
-        have_error = False
-        delete_post = False
-        edit_post = False
         # Retrieve object key with entity name and attribute id number
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
@@ -510,10 +493,6 @@ class LikePost(Handler):
         if self.read_secure_cookie("user_id"):
             current_user = (self.request.cookies.get("user_id")).split("|")[0]
             current_name = (self.request.cookies.get("user")).split("|")[0]
-        # else:
-        #     current_user = None
-        #     current_name = None
-        # if uname:
             l = Likez(creator=current_user, name=current_name,
                       post_id=post_id, does_like=True)
             l.put()  # sends Likez object "l" to the GAE datastore
@@ -521,6 +500,7 @@ class LikePost(Handler):
             self.redirect("/blog/%s" % str(post_id))
         else:
             self.redirect("/blog/login")
+
 
 class UnlikePost(Handler):
 

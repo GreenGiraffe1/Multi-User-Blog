@@ -449,12 +449,16 @@ class PostPage(Handler):
             current_user = None
             current_name = None
 
+
         if self.request.get("delete_c"):
             # User clicked "delete comment" button, remove comment object from
             # Comment entity
             dd_key = self.request.get("delete_c")
             db.delete(dd_key)
             sleep(.2)
+
+
+
         if self.request.get("delete_p"):
             # User clicked "delete post" button, remove Post object from
             # Post entity
@@ -479,6 +483,20 @@ class PostPage(Handler):
             self.redirect("/blog/login")
         else:
             self.redirect("/blog/%s" % str(post_id))
+
+
+class DeleteComment(Handler):
+
+    def get(self, comm_id):
+        key = db.Key.from_path("Comment", int(comm_id))
+        comment = db.get(key)
+        post = comment.post_id
+        db.delete(key)
+        sleep(.2)
+        self.redirect("/blog/%s" % str(post))
+
+
+
 
 
 class EditComment(Handler):
@@ -599,5 +617,6 @@ app = webapp2.WSGIApplication([("/", MainPage),
                                ("/blog/like/([0-9]+)", LikePost),
                                ("/blog/edit/([0-9]+)", EditPage),
                                ("/blog/editcomment/([0-9]+)", EditComment),
+                               ("/blog/deletecomment/([0-9]+)", DeleteComment),
                                ],
                               debug=True)

@@ -466,11 +466,11 @@ class PostPage(Handler):
             db.delete(dpk)  # Deletes post based on its key
             delete_post = True
             sleep(.2)
-        if self.request.get("edit_p"):
-            # User clicked "edit post" button, edit_post flag will redirect
-            # user to the editing page
-            epk = self.request.get("edit_p")
-            edit_post = True
+        # if self.request.get("edit_p"):
+        #     # User clicked "edit post" button, edit_post flag will redirect
+        #     # user to the editing page
+        #     epk = self.request.get("edit_p")
+        #     edit_post = True
         if comment and uname:
             # User submitted new comment, save it in the Comment entity
             c = Comment(content=comment, name=current_name,

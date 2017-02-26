@@ -15,8 +15,11 @@
         <br>
         <div class="post-likes">Likes: {{count}}</div>
             {% if current_user == post.creator %}
-                <form class="post-manip" method="post">
+                <!-- <form class="post-manip" method="post">
                     <button type="submit" name="edit_p" value="{{post.key()}}">Edit</button>
+                </form> -->
+                <form class="post_manip" action="/blog/edit/{{post.key().id()}}">
+                    <button type="submit">Edit!</button>
                 </form>
                 <form class="post-manip" method="post">
                     <button type="submit" name="delete_p" value="{{post.key()}}">Delete</button>

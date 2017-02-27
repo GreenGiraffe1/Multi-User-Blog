@@ -24,7 +24,7 @@ from google.appengine.ext import db
 # import modelz
 from myapp.modelz import Credential, Post, Comment, Likez
 # from handlerz import Handler
-from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut, MainPage
+from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut, MainPage, UnlikePost, EditComment
 from myapp.handlerz.handlerparent import Handler
 
 
@@ -467,24 +467,24 @@ class PostPage(Handler):
 #         self.redirect("/blog/%s" % str(post))
 
 
-class EditComment(Handler):
-
-    def get(self, post_id):
-        uname = self.identify()
-        # Retrieve object key with entity name and attribute id number
-        key = db.Key.from_path("Comment", int(post_id))
-        comment = db.get(key)
-        self.render("editcomment.html", comment=comment, uname=uname)
-
-    def post(self, post_id):
-        key = db.Key.from_path("Comment", int(post_id))
-        comment = db.get(key)
-        update_c_text = self.request.get("comment_update")
-        if update_c_text:
-            comment.content = update_c_text
-            comment.put()  # sends updated Post object "post" to GAE datastore
-            sleep(.2)
-        self.redirect("/blog/%s" % str(comment.post_id))
+# class EditComment(Handler):
+#
+#     def get(self, post_id):
+#         uname = self.identify()
+#         # Retrieve object key with entity name and attribute id number
+#         key = db.Key.from_path("Comment", int(post_id))
+#         comment = db.get(key)
+#         self.render("editcomment.html", comment=comment, uname=uname)
+#
+#     def post(self, post_id):
+#         key = db.Key.from_path("Comment", int(post_id))
+#         comment = db.get(key)
+#         update_c_text = self.request.get("comment_update")
+#         if update_c_text:
+#             comment.content = update_c_text
+#             comment.put()  # sends updated Post object "post" to GAE datastore
+#             sleep(.2)
+#         self.redirect("/blog/%s" % str(comment.post_id))
 
 #
 # class LikePost(Handler):
@@ -505,27 +505,27 @@ class EditComment(Handler):
 #             self.redirect("/blog/login")
 
 
-class UnlikePost(Handler):
-
-    """Do the 'Unlike' Functionality."""
-
-    def get(self, post_id):
-        if self.read_secure_cookie("user_id"):
-            current_user = (self.request.cookies.get("user_id")).split("|")[0]
-            current_name = (self.request.cookies.get("user")).split("|")[0]
-            likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
-            delkey = None
-            for likey in likez:
-                if likey.creator == current_user and likey.does_like:
-                    delkey = likey.key()
-            if delkey:
-                db.delete(delkey)  # Deletes the "Like"
-                sleep(.2)
-                self.redirect("/blog/%s" % str(post_id))
-            else:
-                self.redirect("/blog/%s" % str(post_id))
-        else:
-            self.redirect("/blog/login")
+# class UnlikePost(Handler):
+#
+#     """Do the 'Unlike' Functionality."""
+#
+#     def get(self, post_id):
+#         if self.read_secure_cookie("user_id"):
+#             current_user = (self.request.cookies.get("user_id")).split("|")[0]
+#             current_name = (self.request.cookies.get("user")).split("|")[0]
+#             likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
+#             delkey = None
+#             for likey in likez:
+#                 if likey.creator == current_user and likey.does_like:
+#                     delkey = likey.key()
+#             if delkey:
+#                 db.delete(delkey)  # Deletes the "Like"
+#                 sleep(.2)
+#                 self.redirect("/blog/%s" % str(post_id))
+#             else:
+#                 self.redirect("/blog/%s" % str(post_id))
+#         else:
+#             self.redirect("/blog/login")
 
 
 class EditPage(Handler):

@@ -8,30 +8,35 @@ posts or comments.
 
 """
 
-import os
-import re
-
-import hmac
-import hashlib
-from string import letters
-import random
-from time import sleep
+# import os
+# import re
+#
+# import hmac
+# import hashlib
+# from string import letters
+# import random
+# from time import sleep
 
 import webapp2
-import jinja2
-from google.appengine.ext import db
-from myapp.modelz import Credential, Post, Comment, Likez
-from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut,
+# import jinja2
+# from google.appengine.ext import db
+# from myapp.modelz import Credential, Post, Comment, Likez
+from myapp.handlerz import (DeleteComment, DeletePost, LikePost, LogOut,
                            MainPage, UnlikePost, EditComment, EditPost, Blog,
-                           Login, NewPost, PostPage, Signup
-from myapp.handlerz.handlerparent import Handler
+                           Login, NewPost, PostPage, Signup)
+# from myapp.handlerz.handlerparent import Handler
 
 
-# The following 2 lines of code create the template directory, and create an
-# instance of the jinja object (for templating) respectively.
-template_dir = os.path.join(os.path.dirname(__file__), "templates")
-jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
-                               autoescape=True)
+# # The following 2 lines of code create the template directory, and create an
+# # instance of the jinja object (for templating) respectively.
+# template_dir = os.path.join(os.path.dirname(__file__), "templates")
+# jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
+#                                autoescape=True)
+
+
+
+
+
 
 #
 # # value to hash with cookie values to make them secure. (normally this would be

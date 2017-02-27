@@ -24,7 +24,7 @@ from google.appengine.ext import db
 # import modelz
 from myapp.modelz import Credential, Post, Comment, Likez
 # from handlerz import Handler
-from myapp.handlerz import DeleteComment, DeletePost, LikePost
+from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut, MainPage
 from myapp.handlerz.handlerparent import Handler
 
 
@@ -255,26 +255,26 @@ class Login(Handler):
                         uname=uname)
 
 
-class Logout(Handler):
+# class Logout(Handler):
+#
+#     """Log a user out by reseting cookies. (No webpage / user interface)."""
+#
+#     def get(self):
+#         """Log user out by setting cookie values to ''."""
+#         usn = self.request.cookies.get("user")
+#         self.response.headers.add_header("Set-Cookie",
+#                                          "user=%s; Path=/" % (""))
+#         self.logout()  # Reset the "user_id" cookie to ""
+#         self.redirect("/blog/signup")
 
-    """Log a user out by reseting cookies. (No webpage / user interface)."""
 
-    def get(self):
-        """Log user out by setting cookie values to ''."""
-        usn = self.request.cookies.get("user")
-        self.response.headers.add_header("Set-Cookie",
-                                         "user=%s; Path=/" % (""))
-        self.logout()  # Reset the "user_id" cookie to ""
-        self.redirect("/blog/signup")
-
-
-class MainPage(Handler):
-
-    """Redirect visitors to the main blog page."""
-
-    def get(self):
-        """Redirect visitors to the main blog page."""
-        self.redirect("/blog")
+# class MainPage(Handler):
+#
+#     """Redirect visitors to the main blog page."""
+#
+#     def get(self):
+#         """Redirect visitors to the main blog page."""
+#         self.redirect("/blog")
 
 
 class NewPost(Handler):
@@ -566,7 +566,7 @@ class EditPage(Handler):
 app = webapp2.WSGIApplication([("/", MainPage),
                                ("/blog/signup", Signup),
                                ("/blog/login", Login),
-                               ("/blog/logout", Logout),
+                               ("/blog/logout", LogOut),
                                ("/blog", Blog),
                                ("/blog/newpost", NewPost),
                                ("/blog/([0-9]+)", PostPage),

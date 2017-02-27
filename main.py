@@ -20,25 +20,20 @@ from time import sleep
 import webapp2
 import jinja2
 from google.appengine.ext import db
-# from models import Credential, Post, Comment, Likez
-# import modelz
 from myapp.modelz import Credential, Post, Comment, Likez
-# from handlerz import Handler
-from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut, MainPage, UnlikePost, EditComment, EditPost, Blog, Login, NewPost, PostPage, Signup
+from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut,
+                           MainPage, UnlikePost, EditComment, EditPost, Blog,
+                           Login, NewPost, PostPage, Signup
 from myapp.handlerz.handlerparent import Handler
 
 
 # The following 2 lines of code create the template directory, and create an
 # instance of the jinja object (for templating) respectively.
-# Templates are stored in the same directory as the .py file
-# I chose not to create a template directory for ease of use while learning.
-# In the future I'll store them in a seperate folder with the following code:
 template_dir = os.path.join(os.path.dirname(__file__), "templates")
-# template_dir = os.path.join(os.path.dirname(__file__))
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
 
-# 
+#
 # # value to hash with cookie values to make them secure. (normally this would be
 # # held in another secure module, but is here for ease of learning.)
 # SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"

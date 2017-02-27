@@ -1,20 +1,14 @@
-
 import webapp2
 import jinja2
 import os
 
-
 from google.appengine.ext import db
-
 from myapp.functions import appfunctions
 
-# template_dir = os.path.join(os.path.dirname(__file__), "templates")
 
 template_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates')
-
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
-
 
 
 class Handler(webapp2.RequestHandler):

@@ -285,7 +285,7 @@ class NewPost(Handler):
         """Render newpost page where user can create blog posts."""
         uname = self.identify()
         self.render("newpost.html", subject=subject, content=content,
-                    error=error)
+                    error=error, uname=uname)
 
     def get(self):
         """Call method that renders the newpost page."""

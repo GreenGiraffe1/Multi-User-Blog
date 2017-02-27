@@ -1,35 +1,20 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>FS-ND Blog</title>
-        <style type="text/css">
-            body {
-                font-family: sans-serif;
-                width: 800px;
-                margin: 0 auto;
-            }
-            .error {
-                color: red;
-            }
+        {% extends "base.html" %}
 
-        </style>
-    </head>
-    <body>
-        <h1>FS-ND Blog</h1>
+        {% block content %}
         <br>
-        <h3>new post</h3>
+        <h2>New Post:</h2>
         <form method="post">
             <label>
-                <div>subject</div>
+                <div>Subject:</div>
                 <input type="text" name="subject" value="{{subject}}">
             </label>
+            <br>
+            <br>
             <label>
-                <div>content</div>
+                <div>Content:</div>
                 <textarea name="content" rows="8" cols="80">{{content}}</textarea>
             </label>
             <div class="error">{{error}}</div>
             <input type="submit">
         </form>
-    </body>
-</html>
+        {% endblock %}

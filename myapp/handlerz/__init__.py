@@ -1,2 +1,2 @@
 from deletecomment import DeleteComment
-# from handlerparent import Handler
+from deletepost import DeletePost

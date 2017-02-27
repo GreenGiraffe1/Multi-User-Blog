@@ -3,8 +3,6 @@ from google.appengine.ext import db
 from time import sleep
 
 
-
-
 class DeleteComment(Handler):
 
     def get(self, comm_id):

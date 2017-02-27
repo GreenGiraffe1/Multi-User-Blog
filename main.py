@@ -24,7 +24,7 @@ from google.appengine.ext import db
 # import modelz
 from myapp.modelz import Credential, Post, Comment, Likez
 # from handlerz import Handler
-from myapp.handlerz import DeleteComment
+from myapp.handlerz import DeleteComment, DeletePost
 from myapp.handlerz.handlerparent import Handler
 
 
@@ -447,13 +447,13 @@ class PostPage(Handler):
 
 
 
-class DeletePost(Handler):
-
-    def get(self, post_id):
-        key = db.Key.from_path("Post", int(post_id))
-        db.delete(key)
-        sleep(.2)
-        self.redirect("/blog")
+# class DeletePost(Handler):
+#
+#     def get(self, post_id):
+#         key = db.Key.from_path("Post", int(post_id))
+#         db.delete(key)
+#         sleep(.2)
+#         self.redirect("/blog")
 
 
 # class DeleteComment(Handler):

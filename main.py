@@ -24,7 +24,7 @@ from google.appengine.ext import db
 # import modelz
 from myapp.modelz import Credential, Post, Comment, Likez
 # from handlerz import Handler
-from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut, MainPage, UnlikePost, EditComment
+from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut, MainPage, UnlikePost, EditComment, EditPost, Blog
 from myapp.handlerz.handlerparent import Handler
 
 
@@ -327,27 +327,27 @@ class NewPost(Handler):
             self.render_newpost(subject, content, error)
 
 
-class Blog(Handler):
-
-    """Display 10 most recent posts from Post entity on main blog page."""
-
-    def render_fpage(self):
-        """Display the main blog page.
-
-        Query the Post entity for the 10 most recent blog posts and display
-        them in descending order of their creation date / time, along with
-        their author and when they were first posted.
-
-        """
-        # Query the Google App Engine (GAE) datastore, Post entity, return the
-        # 10 most recent posts in descending order of creation time.
-        posts = Post.all().order("-created").fetch(limit=10)
-        uname = self.identify()
-        self.render("blog.html", posts=posts, uname=uname)
-
-    def get(self):
-        """Call function that renders the main blog page."""
-        self.render_fpage()
+# class Blog(Handler):
+#
+#     """Display 10 most recent posts from Post entity on main blog page."""
+#
+#     def render_fpage(self):
+#         """Display the main blog page.
+#
+#         Query the Post entity for the 10 most recent blog posts and display
+#         them in descending order of their creation date / time, along with
+#         their author and when they were first posted.
+#
+#         """
+#         # Query the Google App Engine (GAE) datastore, Post entity, return the
+#         # 10 most recent posts in descending order of creation time.
+#         posts = Post.all().order("-created").fetch(limit=10)
+#         uname = self.identify()
+#         self.render("blog.html", posts=posts, uname=uname)
+#
+#     def get(self):
+#         """Call function that renders the main blog page."""
+#         self.render_fpage()
 
 
 class PostPage(Handler):
@@ -528,39 +528,39 @@ class PostPage(Handler):
 #             self.redirect("/blog/login")
 
 
-class EditPage(Handler):
-
-    """Allow user to edit a post they've created."""
-
-    def get(self, post_id):
-        """Render page where a poster can edit post, post_id passed in URL."""
-        uname = self.identify()
-        # Retrieve object key with entity name and attribute id number
-        key = db.Key.from_path("Post", int(post_id))
-        post = db.get(key)
-        self.render("edit.html", post=post, uname=uname)
-
-    def post(self, post_id):
-        """Accept user input and save or cancel editing accordingly.
-
-        Receive an update request from server when user pushes the submit
-        button. Update the post.content attribute of the corresponding Post
-        entity. This Post object is determined by retrieving the post_id from
-        the URL.
-
-        If the user pushes the cancel button don't send anything to the server
-        and redirect the user to the post's main display page.
-
-        """
-        # Retrieve object key with entity name and attribute id number
-        key = db.Key.from_path("Post", int(post_id))
-        post = db.get(key)
-        update_p_text = self.request.get("post_update")
-        if update_p_text:
-            post.content = update_p_text
-            post.put()  # sends updated Post object "post" to GAE datastore
-            sleep(.2)
-        self.redirect("/blog/%s" % str(post_id))
+# class EditPost(Handler):
+#
+#     """Allow user to edit a post they've created."""
+#
+#     def get(self, post_id):
+#         """Render page where a poster can edit post, post_id passed in URL."""
+#         uname = self.identify()
+#         # Retrieve object key with entity name and attribute id number
+#         key = db.Key.from_path("Post", int(post_id))
+#         post = db.get(key)
+#         self.render("edit.html", post=post, uname=uname)
+#
+#     def post(self, post_id):
+#         """Accept user input and save or cancel editing accordingly.
+#
+#         Receive an update request from server when user pushes the submit
+#         button. Update the post.content attribute of the corresponding Post
+#         entity. This Post object is determined by retrieving the post_id from
+#         the URL.
+#
+#         If the user pushes the cancel button don't send anything to the server
+#         and redirect the user to the post's main display page.
+#
+#         """
+#         # Retrieve object key with entity name and attribute id number
+#         key = db.Key.from_path("Post", int(post_id))
+#         post = db.get(key)
+#         update_p_text = self.request.get("post_update")
+#         if update_p_text:
+#             post.content = update_p_text
+#             post.put()  # sends updated Post object "post" to GAE datastore
+#             sleep(.2)
+#         self.redirect("/blog/%s" % str(post_id))
 
 
 app = webapp2.WSGIApplication([("/", MainPage),
@@ -572,7 +572,7 @@ app = webapp2.WSGIApplication([("/", MainPage),
                                ("/blog/([0-9]+)", PostPage),
                                ("/blog/unlike/([0-9]+)", UnlikePost),
                                ("/blog/like/([0-9]+)", LikePost),
-                               ("/blog/edit/([0-9]+)", EditPage),
+                               ("/blog/edit/([0-9]+)", EditPost),
                                ("/blog/editcomment/([0-9]+)", EditComment),
                                ("/blog/deletecomment/([0-9]+)", DeleteComment),
                                ("/blog/deletepost/([0-9]+)", DeletePost),

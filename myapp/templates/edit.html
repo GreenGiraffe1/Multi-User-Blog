@@ -1,0 +1,13 @@
+        {% extends "base.html" %}
+
+        {% block content %}
+        <h2>Edit Your Post:</h2>
+        <form class="edit-post" method="post">
+            <textarea name="post_update" rows="8" cols="80">{{post.content}}</textarea>
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+        <form class="edit-post" action="/blog/{{post.key().id()}}">
+            <button type="submit">Cancel!</button>
+        </form>
+        {% endblock %}

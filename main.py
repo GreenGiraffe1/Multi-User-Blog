@@ -22,10 +22,10 @@ import jinja2
 from google.appengine.ext import db
 # from models import Credential, Post, Comment, Likez
 # import modelz
-from modelz import Credential, Post, Comment, Likez
+from myapp.modelz import Credential, Post, Comment, Likez
 # from handlerz import Handler
-from handlerz import DeleteComment
-from handlerz.handlerparent import Handler
+from myapp.handlerz import DeleteComment
+from myapp.handlerz.handlerparent import Handler
 
 
 # The following 2 lines of code create the template directory, and create an
@@ -423,9 +423,6 @@ class PostPage(Handler):
         This is established by checking if their user_id (stored in a cookie)
         matches the post/comment creator id.
 
-        The 'if statements' near the bottom determine what information the
-        user has sent to the server, and takes the appropriate action.
-
         """
         # Retrieve object key with entity name and attribute id number
         key = db.Key.from_path("Post", int(post_id))
@@ -437,13 +434,17 @@ class PostPage(Handler):
         else:
             current_user = None
             current_name = None
-        if comment and current_user:
-            # User submitted new comment, save it in the Comment entity
-            c = Comment(content=comment, name=current_name,
-                        creator=current_user, post_id=post_id)
-            c.put()  # sends Comment object "c" to the GAE datastore
-            sleep(.2)
+        if current_user:
+            if comment:
+                # User submitted new comment, save it in the Comment entity
+                c = Comment(content=comment, name=current_name,
+                            creator=current_user, post_id=post_id)
+                c.put()  # sends Comment object "c" to the GAE datastore
+                sleep(.2)
             self.redirect("/blog/%s" % str(post_id))
+        else:
+            self.redirect("/blog/login")
+
 
 
 class DeletePost(Handler):

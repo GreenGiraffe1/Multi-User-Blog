@@ -1,0 +1,66 @@
+        {% extends "base.html" %}
+
+        {% block content %}
+        <br>
+        <br>
+        <br>
+        <div class="container">
+            <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
+            <div class="poster">By: {{post.name}}</div>
+        </div>
+        <hr>
+        <div class="post-subject"><b>{{post.subject | safe}}</b></div>
+        <br>
+        <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
+        <br>
+        <div class="post-likes">Likes: {{count}}</div>
+            {% if current_user == post.creator %}
+                <form class="post_manip" action="/blog/edit/{{post.key().id()}}">
+                    <button type="submit">Edit!</button>
+                </form>
+                <form class="post_manip" action="/blog/deletepost/{{post.key().id()}}">
+                    <button type="submit">Delete!</button>
+                </form>
+            {% elif current_user != post.creator and display == 'like' %}
+                <form class="like" action="/blog/like/{{post.key().id()}}">
+                    <button type="submit" name="like1">Like!</button>
+                </form>
+            {% elif current_user != post.creator and display == 'unlike' %}
+                <form class="like" action="/blog/unlike/{{post.key().id()}}">
+                    <button type="submit" name="unlike">Unlike</button>
+                </form>
+            {% endif %}
+        <form class="comment" method="post">
+            <br>
+            <br>
+            <br>
+            <label>
+                Leave a Comment:
+                <br>
+                <textarea name="comment" rows="5" cols="50"></textarea>
+            </label>
+            <br>
+            <button type="submit" name="button">Submit</button>
+        </form>
+        <br>
+        <h3>Comments:</h3>
+            {% for cm in comments %}
+                {% if cm.post_id == cur_post_id and not cm.mod %}<br>
+                <div class="comment-date">{{cm.created.strftime("%-m/%d/%y")}}</div>
+                <div class="comment-content">{{cm.content.replace('\n', '<br>') | safe}}</div>
+                <div class="comment-author">By: {{cm.name}}</div>
+                    {% if current_user == cm.creator and not cm.mod %}
+                        <form class="com_manip" action="/blog/editcomment/{{cm.key().id()}}">
+                            <button type="submit">Edit!</button>
+                        </form>
+                        <form class="com-manip" action="/blog/deletecomment/{{cm.key().id()}}">
+                            <button type="submit">Delete!</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+                <br>
+            {% endfor %}
+        <br>
+        <br>
+        <br>
+        {% endblock %}

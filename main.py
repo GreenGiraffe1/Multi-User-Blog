@@ -24,7 +24,7 @@ from google.appengine.ext import db
 # import modelz
 from myapp.modelz import Credential, Post, Comment, Likez
 # from handlerz import Handler
-from myapp.handlerz import DeleteComment, DeletePost
+from myapp.handlerz import DeleteComment, DeletePost, LikePost
 from myapp.handlerz.handlerparent import Handler
 
 
@@ -486,23 +486,23 @@ class EditComment(Handler):
             sleep(.2)
         self.redirect("/blog/%s" % str(comment.post_id))
 
-
-class LikePost(Handler):
-
-    """Do the 'Like' Functionality."""
-
-    def get(self, post_id):
-        # uname = self.identify()
-        if self.read_secure_cookie("user_id"):
-            current_user = (self.request.cookies.get("user_id")).split("|")[0]
-            current_name = (self.request.cookies.get("user")).split("|")[0]
-            l = Likez(creator=current_user, name=current_name,
-                      post_id=post_id, does_like=True)
-            l.put()  # sends Likez object "l" to the GAE datastore
-            sleep(.2)
-            self.redirect("/blog/%s" % str(post_id))
-        else:
-            self.redirect("/blog/login")
+#
+# class LikePost(Handler):
+#
+#     """Do the 'Like' Functionality."""
+#
+#     def get(self, post_id):
+#         # uname = self.identify()
+#         if self.read_secure_cookie("user_id"):
+#             current_user = (self.request.cookies.get("user_id")).split("|")[0]
+#             current_name = (self.request.cookies.get("user")).split("|")[0]
+#             l = Likez(creator=current_user, name=current_name,
+#                       post_id=post_id, does_like=True)
+#             l.put()  # sends Likez object "l" to the GAE datastore
+#             sleep(.2)
+#             self.redirect("/blog/%s" % str(post_id))
+#         else:
+#             self.redirect("/blog/login")
 
 
 class UnlikePost(Handler):

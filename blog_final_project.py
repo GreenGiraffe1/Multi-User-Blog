@@ -30,8 +30,8 @@ from modelz import Credential, Post, Comment, Likez
 # Templates are stored in the same directory as the .py file
 # I chose not to create a template directory for ease of use while learning.
 # In the future I'll store them in a seperate folder with the following code:
-# template_dir = os.path.join(os.path.dirname(__file__, "templates"))
-template_dir = os.path.join(os.path.dirname(__file__))
+template_dir = os.path.join(os.path.dirname(__file__), "templates")
+# template_dir = os.path.join(os.path.dirname(__file__))
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
 
@@ -440,7 +440,7 @@ class PostPage(Handler):
                         creator=current_user, post_id=post_id)
             c.put()  # sends Comment object "c" to the GAE datastore
             sleep(.2)
-        else:
+        # else:
             self.redirect("/blog/%s" % str(post_id))
 
 

@@ -24,7 +24,7 @@ from google.appengine.ext import db
 # import modelz
 from myapp.modelz import Credential, Post, Comment, Likez
 # from handlerz import Handler
-from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut, MainPage, UnlikePost, EditComment, EditPost, Blog, Login, NewPost, PostPage
+from myapp.handlerz import DeleteComment, DeletePost, LikePost, LogOut, MainPage, UnlikePost, EditComment, EditPost, Blog, Login, NewPost, PostPage, Signup
 from myapp.handlerz.handlerparent import Handler
 
 
@@ -38,67 +38,73 @@ template_dir = os.path.join(os.path.dirname(__file__), "templates")
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
 
+# 
+# # value to hash with cookie values to make them secure. (normally this would be
+# # held in another secure module, but is here for ease of learning.)
+# SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"
+#
+# # REGEX to validate user registration inputs
+# USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
+# PASSWORD_RE = re.compile(r"^.{3,20}$")
+# EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
+#
+#
+# def valid_username(username):
+#     """Check username entered to determine if it's valid (with REGEX)."""
+#     return USER_RE.match(username)
+#
+#
+# def valid_password(password):
+#     """Check password entered to determine if it's valid (with REGEX)."""
+#     return PASSWORD_RE.match(password)
+#
+#
+# def valid_email(email):
+#     """Check email entered to determine if it's valid (with REGEX)."""
+#     return EMAIL_RE.match(email)
+#
+#
+# def hash_str(s):
+#     """Hash the user_id and SECRET (a constant) to create a cookie hash."""
+#     return hmac.new(SECRET, s).hexdigest()
+#
+#
+# def make_secure_val(s):
+#     """When user_id is input, it return the value to set for the cookie."""
+#     return "%s|%s" % (s, hash_str(s))
+#
+#
+# def check_secure_val(h):
+#     """Check whether the cookie value from the current webpage is valid."""
+#     if h:
+#         val = h.split("|")[0]
+#         if h == make_secure_val(val):
+#             return val
+#
+#
+# def make_salt(length=5):
+#     """Create a unique salt for hashing a user's password during signup."""
+#     return "".join(random.choice(letters) for x in xrange(length))
+#
+#
+# def make_pw_hash(name, pw, salt=None):
+#     """Make password hash on signup, or check password hash on login."""
+#     if not salt:
+#         salt = make_salt()
+#     h = hashlib.sha256(name + pw + salt).hexdigest()  # sha256 hash algorithm
+#     return "%s|%s" % (salt, h)
+#
+#
+# def valid_pw(name, password, h):
+#     """Check hash of user's login against value in the Credential entity."""
+#     salt = h.split("|")[0]
+#     return h == make_pw_hash(name, password, salt)
+#
+#
 
-# value to hash with cookie values to make them secure. (normally this would be
-# held in another secure module, but is here for ease of learning.)
-SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"
-
-# REGEX to validate user registration inputs
-USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
-PASSWORD_RE = re.compile(r"^.{3,20}$")
-EMAIL_RE = re.compile(r"^[\S]+@[\S]+.[\S]+$")
 
 
-def valid_username(username):
-    """Check username entered to determine if it's valid (with REGEX)."""
-    return USER_RE.match(username)
 
-
-def valid_password(password):
-    """Check password entered to determine if it's valid (with REGEX)."""
-    return PASSWORD_RE.match(password)
-
-
-def valid_email(email):
-    """Check email entered to determine if it's valid (with REGEX)."""
-    return EMAIL_RE.match(email)
-
-
-def hash_str(s):
-    """Hash the user_id and SECRET (a constant) to create a cookie hash."""
-    return hmac.new(SECRET, s).hexdigest()
-
-
-def make_secure_val(s):
-    """When user_id is input, it return the value to set for the cookie."""
-    return "%s|%s" % (s, hash_str(s))
-
-
-def check_secure_val(h):
-    """Check whether the cookie value from the current webpage is valid."""
-    if h:
-        val = h.split("|")[0]
-        if h == make_secure_val(val):
-            return val
-
-
-def make_salt(length=5):
-    """Create a unique salt for hashing a user's password during signup."""
-    return "".join(random.choice(letters) for x in xrange(length))
-
-
-def make_pw_hash(name, pw, salt=None):
-    """Make password hash on signup, or check password hash on login."""
-    if not salt:
-        salt = make_salt()
-    h = hashlib.sha256(name + pw + salt).hexdigest()  # sha256 hash algorithm
-    return "%s|%s" % (salt, h)
-
-
-def valid_pw(name, password, h):
-    """Check hash of user's login against value in the Credential entity."""
-    salt = h.split("|")[0]
-    return h == make_pw_hash(name, password, salt)
 
 
 # class Handler(webapp2.RequestHandler):
@@ -157,65 +163,65 @@ def valid_pw(name, password, h):
 #             uname = None
 #         return uname
 
-
-class Signup(Handler):
-
-    """Handle user input and errors on the signup webpage, set cookies."""
-
-    def get(self):
-        """Render signup page."""
-        uname = self.identify()
-        self.render("register.html", uname=uname)
-
-    def post(self):
-        """Accept user inputs and conditionally register user.
-
-        Verify that all inputs meet the established criteria, if not render
-        appropriate error message and ask for new input. Upon valid input
-        create a new object in the Credential entity for the registered user,
-        and set 2 cookies: 'user' and 'user_id'.
-
-        """
-        uname = self.identify()
-        username = self.request.get("username")
-        password = self.request.get("password")
-        verify = self.request.get("verify")
-        email = self.request.get("email")
-        # params dictionary used for error handling
-        params = dict(username=username, email=email, uname=uname)
-        have_error = False
-        if not valid_username(username):
-            params["error_username"] = "That's not a valid username."
-            have_error = True
-        if not valid_password(password):
-            params["error_password"] = "That wasn't a valid password."
-            have_error = True
-        elif password != verify:
-            params["error_verify"] = "Your passwords didn't match."
-            have_error = True
-        if email:
-            if not valid_email(email):
-                params["error_email"] = "That's not a valid email."
-                have_error = True
-        # GQL query the Google App Engine (GAE) datastore, Credential entity
-        credentials = db.GqlQuery("SELECT * FROM Credential")
-        for cr in credentials:
-            if cr.username == username:
-                params["error_username"] = ("That username already exists. "
-                                            "Choose another and try again.")
-                have_error = True
-        if have_error:
-            self.render("register.html", **params)
-        else:
-            c = Credential(username=username, email=email,
-                           hashed_password=make_pw_hash(username, verify))
-            c.put()  # sends Credential object "c" to the GAE datastore
-            self.response.headers.add_header("Set-Cookie", "user=%s; Path=/"
-                                             % str(make_secure_val(username)))
-            self.login(c)  # set secure cookie "user_id"
-            self.redirect("/blog")
-
-
+#
+# class Signup(Handler):
+#
+#     """Handle user input and errors on the signup webpage, set cookies."""
+#
+#     def get(self):
+#         """Render signup page."""
+#         uname = self.identify()
+#         self.render("register.html", uname=uname)
+#
+#     def post(self):
+#         """Accept user inputs and conditionally register user.
+#
+#         Verify that all inputs meet the established criteria, if not render
+#         appropriate error message and ask for new input. Upon valid input
+#         create a new object in the Credential entity for the registered user,
+#         and set 2 cookies: 'user' and 'user_id'.
+#
+#         """
+#         uname = self.identify()
+#         username = self.request.get("username")
+#         password = self.request.get("password")
+#         verify = self.request.get("verify")
+#         email = self.request.get("email")
+#         # params dictionary used for error handling
+#         params = dict(username=username, email=email, uname=uname)
+#         have_error = False
+#         if not valid_username(username):
+#             params["error_username"] = "That's not a valid username."
+#             have_error = True
+#         if not valid_password(password):
+#             params["error_password"] = "That wasn't a valid password."
+#             have_error = True
+#         elif password != verify:
+#             params["error_verify"] = "Your passwords didn't match."
+#             have_error = True
+#         if email:
+#             if not valid_email(email):
+#                 params["error_email"] = "That's not a valid email."
+#                 have_error = True
+#         # GQL query the Google App Engine (GAE) datastore, Credential entity
+#         credentials = db.GqlQuery("SELECT * FROM Credential")
+#         for cr in credentials:
+#             if cr.username == username:
+#                 params["error_username"] = ("That username already exists. "
+#                                             "Choose another and try again.")
+#                 have_error = True
+#         if have_error:
+#             self.render("register.html", **params)
+#         else:
+#             c = Credential(username=username, email=email,
+#                            hashed_password=make_pw_hash(username, verify))
+#             c.put()  # sends Credential object "c" to the GAE datastore
+#             self.response.headers.add_header("Set-Cookie", "user=%s; Path=/"
+#                                              % str(make_secure_val(username)))
+#             self.login(c)  # set secure cookie "user_id"
+#             self.redirect("/blog")
+#
+#
 # class Login(Handler):
 #
 #     """Handle user input and errors on the login webpage, set cookies."""

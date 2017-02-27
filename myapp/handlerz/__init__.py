@@ -10,3 +10,4 @@ from blog import Blog
 from login import Login
 from newpost import NewPost
 from postpage import PostPage
+from signup import Signup

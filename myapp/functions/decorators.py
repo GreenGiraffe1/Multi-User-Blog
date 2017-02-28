@@ -1,6 +1,6 @@
 from myapp.handlerz.handlerparent import Handler
 from google.appengine.ext import db
-from myapp.modelz import Comment
+from myapp.modelz import Comment, Post
 
 
 
@@ -28,6 +28,20 @@ def comment_exists(f):
     return wrapper
 
 
+def post_exists(f):
+    def wrapper(self, post_id):
+        key = db.Key.from_path('Post', int(post_id))
+        post = db.get(key)
+        if post:
+            return f(self, post_id)
+        else:
+            # return self.redirect("/blog/login")
+            self.error(404)
+            # self.redirect("/blog")
+            return
+    return wrapper
+
+
 def user_owns_comment(f):
     def wrapper(self, post_id):
         key = db.Key.from_path('Comment', int(post_id))
@@ -42,7 +56,18 @@ def user_owns_comment(f):
     return wrapper
 
 
-
+def user_owns_post(f):
+    def wrapper(self, post_id):
+        key = db.Key.from_path('Post', int(post_id))
+        post = db.get(key)
+        if self.read_secure_cookie("user_id") == post.creator:
+            return f(self, post_id)
+        else:
+            return self.redirect("/blog/login")
+            # self.error(404)
+            # self.redirect("/blog")
+            return
+    return wrapper
 
 
 

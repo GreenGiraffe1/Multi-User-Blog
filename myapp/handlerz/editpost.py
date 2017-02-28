@@ -2,12 +2,17 @@ from handlerparent import Handler
 from google.appengine.ext import db
 from time import sleep
 from myapp.modelz import Post
+from myapp.functions.decorators import (user_logged_in, post_exists,
+                                        user_owns_post)
 
 
 class EditPost(Handler):
 
     """Allow user to edit a post they've created."""
 
+    @user_logged_in
+    @post_exists
+    @user_owns_post
     def get(self, post_id):
         """Render page where a poster can edit post, post_id passed in URL."""
         uname = self.identify()
@@ -16,6 +21,9 @@ class EditPost(Handler):
         post = db.get(key)
         self.render("edit.html", post=post, uname=uname)
 
+    @user_logged_in
+    @post_exists
+    @user_owns_post
     def post(self, post_id):
         """Accept user input and save or cancel editing accordingly.
 

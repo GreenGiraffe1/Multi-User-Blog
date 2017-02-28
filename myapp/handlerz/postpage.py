@@ -2,13 +2,14 @@ from handlerparent import Handler
 from google.appengine.ext import db
 from time import sleep
 from myapp.modelz import Post, Comment, Likez
-from myapp.functions.decorators import user_logged_in
+from myapp.functions.decorators import user_logged_in, post_exists
 
 
 class PostPage(Handler):
 
     """Display individual posts with corresponding comments & 'Likes'."""
 
+    @post_exists
     def get(self, post_id):
         """Display individual blog posts and all related content.
 
@@ -40,9 +41,6 @@ class PostPage(Handler):
             current_user = (self.request.cookies.get("user_id")).split("|")[0]
         else:
             current_user = None
-        if not post:
-            self.error(404)
-            return
         likez = db.GqlQuery("SELECT * FROM Likez ORDER BY created DESC")
         count = 0  # Count the number of likes for post from the database.
         for likey in likez:

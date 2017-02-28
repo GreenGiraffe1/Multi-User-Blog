@@ -2,6 +2,8 @@
 
 **ND_multi-user-blog** is a blogging platform designed to be hosted on Google App Engine. User's can securely sign-up, login, create posts, comment on posts, and like posts. The platform provides appropriate user permissions and security measures.
 
+Click here to be taken to [Matt's Blog's implementation of this platform](http://hello-world-156422.appspot.com).
+
 ## Setup:
 Begin the setup by cloning all files to the same directory, and making sure that Python 2.7x is installed. You'll need to create a new Google Cloud Platform Console project or retrieve the project ID of an existing project from the Google Cloud Platform Console. Then install and then initialize the Google Cloud SDK.
 

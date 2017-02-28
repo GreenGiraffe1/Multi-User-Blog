@@ -1,9 +1,8 @@
 from handlerparent import Handler
 from google.appengine.ext import db
 from time import sleep
-from myapp.modelz import Post
-from myapp.modelz import Comment
-from myapp.modelz import Likez
+from myapp.modelz import Post, Comment, Likez
+from myapp.functions.decorators import user_logged_in
 
 
 class PostPage(Handler):
@@ -59,6 +58,7 @@ class PostPage(Handler):
                     comments=self.query, cur_post_id=post_id, count=count,
                     likez=likez, display=display, uname=uname)
 
+    @user_logged_in
     def post(self, post_id):
         """Allow user to comment and Like posts, and edit their contributions.
 

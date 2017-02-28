@@ -10,7 +10,9 @@ def user_logged_in(f):
         if self.read_secure_cookie("user_id"):
             return f(self, *a, **kw)
         else:
+            # return
             return self.redirect("/blog/login")
+            # return
     return wrapper
 
 
@@ -22,9 +24,9 @@ def comment_exists(f):
             return f(self, post_id)
         else:
             # return self.redirect("/blog/login")
-            self.error(404)
+            return self.error(404)
             # self.redirect("/blog")
-            return
+            # return
     return wrapper
 
 
@@ -36,9 +38,9 @@ def post_exists(f):
             return f(self, post_id)
         else:
             # return self.redirect("/blog/login")
-            self.error(404)
+            return self.error(404)
             # self.redirect("/blog")
-            return
+            # return
     return wrapper
 
 
@@ -49,10 +51,11 @@ def user_owns_comment(f):
         if self.read_secure_cookie("user_id") == comment.creator:
             return f(self, post_id)
         else:
+            # return self.redirect("/blog/login")
             return self.redirect("/blog/login")
             # self.error(404)
             # self.redirect("/blog")
-            return
+            # return
     return wrapper
 
 
@@ -63,10 +66,11 @@ def user_owns_post(f):
         if self.read_secure_cookie("user_id") == post.creator:
             return f(self, post_id)
         else:
+            # return self.redirect("/blog/login")
             return self.redirect("/blog/login")
             # self.error(404)
             # self.redirect("/blog")
-            return
+            # return
     return wrapper
 
 

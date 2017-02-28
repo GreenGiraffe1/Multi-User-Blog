@@ -57,6 +57,7 @@ class PostPage(Handler):
                     likez=likez, display=display, uname=uname)
 
     @user_logged_in
+    @post_exists
     def post(self, post_id):
         """Allow user to comment and Like posts, and edit their contributions.
 
@@ -82,19 +83,19 @@ class PostPage(Handler):
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)
         comment = self.request.get("comment")
-        if self.read_secure_cookie("user_id"):
-            current_user = (self.request.cookies.get("user_id")).split("|")[0]
-            current_name = (self.request.cookies.get("user")).split("|")[0]
-        else:
-            current_user = None
-            current_name = None
-        if current_user:
-            if comment:
-                # User submitted new comment, save it in the Comment entity
-                c = Comment(content=comment, name=current_name,
-                            creator=current_user, post_id=post_id)
-                c.put()  # sends Comment object "c" to the GAE datastore
-                sleep(.2)
-            self.redirect("/blog/%s" % str(post_id))
-        else:
-            self.redirect("/blog/login")
+        # if self.read_secure_cookie("user_id"):
+        current_user = (self.request.cookies.get("user_id")).split("|")[0]
+        current_name = (self.request.cookies.get("user")).split("|")[0]
+        # else:
+        #     current_user = None
+        #     current_name = None
+        # if current_user:
+        if comment:
+            # User submitted new comment, save it in the Comment entity
+            c = Comment(content=comment, name=current_name,
+                        creator=current_user, post_id=post_id)
+            c.put()  # sends Comment object "c" to the GAE datastore
+            sleep(.2)
+        self.redirect("/blog/%s" % str(post_id))
+        # else:
+        #     self.redirect("/blog/login")

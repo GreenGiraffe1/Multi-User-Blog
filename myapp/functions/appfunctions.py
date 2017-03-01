@@ -1,4 +1,3 @@
-
 import os
 import re
 
@@ -9,9 +8,8 @@ import random
 from time import sleep
 
 
-
-# value to hash with cookie values to make them secure. (normally this would be
-# held in another secure module, but is here for ease of learning.)
+# value to hash with cookie values to make them secure. (normally this would
+# be held in another secure module, but is here for ease of learning.)
 SECRET = "LYtOJ9kweSza7sBszlB79z5WEELkEY8O3t6Ll5F4nmj7bWzNLR"
 
 # REGEX to validate user registration inputs

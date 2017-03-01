@@ -4,6 +4,7 @@ from time import sleep
 from myapp.modelz import Post
 from myapp.functions.decorators import user_logged_in
 
+
 class NewPost(Handler):
 
     """Accept user input of a blog post, and save it in the Post entity."""

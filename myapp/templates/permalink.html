@@ -16,10 +16,10 @@
         <div class="post-likes">Likes: {{count}}</div>
             {% if current_user == post.creator %}
                 <form class="post_manip" action="/blog/edit/{{post.key().id()}}">
-                    <button type="submit">Edit!</button>
+                    <button type="submit">Edit</button>
                 </form>
                 <form class="post_manip" action="/blog/deletepost/{{post.key().id()}}">
-                    <button type="submit">Delete!</button>
+                    <button type="submit">Delete</button>
                 </form>
             {% elif current_user != post.creator and display == 'like' %}
                 <form class="like" action="/blog/like/{{post.key().id()}}">
@@ -51,10 +51,10 @@
                 <div class="comment-author">By: {{cm.name}}</div>
                     {% if current_user == cm.creator and not cm.mod %}
                         <form class="com_manip" action="/blog/editcomment/{{cm.key().id()}}">
-                            <button type="submit">Edit!</button>
+                            <button type="submit">Edit</button>
                         </form>
                         <form class="com-manip" action="/blog/deletecomment/{{cm.key().id()}}">
-                            <button type="submit">Delete!</button>
+                            <button type="submit">Delete</button>
                         </form>
                     {% endif %}
                 {% endif %}

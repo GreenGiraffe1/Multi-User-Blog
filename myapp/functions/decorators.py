@@ -50,7 +50,7 @@ def user_owns_comment(f):
 
 
 def user_owns_post(f):
-        """Verify the current user owns the current post."""
+    """Verify the current user owns the current post."""
     def wrapper(self, post_id):
         key = db.Key.from_path("Post", int(post_id))
         post = db.get(key)

@@ -15,8 +15,6 @@ class Blog(Handler):
         their author and when they were first posted.
 
         """
-        # Query the Google App Engine (GAE) datastore, Post entity, return the
-        # 10 most recent posts in descending order of creation time.
         posts = Post.all().order("-created").fetch(limit=10)
         uname = self.identify()
         self.render("blog.html", posts=posts, uname=uname)

@@ -1,6 +1,5 @@
 from handlerparent import Handler
 from myapp.modelz import Post
-# from google.appengine.ext import db  # might not need this
 
 
 class Blog(Handler):

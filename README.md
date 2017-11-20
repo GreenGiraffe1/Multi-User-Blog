@@ -1,6 +1,6 @@
 # Matt's Blog
 
-**ND_multi-user-blog** is a blogging platform designed to be hosted on Google App Engine. User's can securely sign-up, login, create posts, comment on posts, and like posts. The platform provides appropriate user permissions and security measures.
+**Multi-User-Blog** is a blogging platform designed to be hosted on Google App Engine. User's can securely sign-up, login, create posts, comment on posts, and like posts. The platform provides appropriate user permissions and security measures.
 
 Click here to be taken to [Matt's Blog's implementation of this platform](http://hello-world-156422.appspot.com).
 
@@ -43,5 +43,5 @@ This project was written while I was taking the Udacity Full-Stack Nanodegree, a
 
 ## License
 
-**ND_multi-user-blog** is a public domain work, with license
+**Multi-User-Blog** is a public domain work, with license
 [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).

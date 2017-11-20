@@ -1,4 +1,4 @@
-# Matt's Blog
+# Multi-User Blog
 
 **Multi-User-Blog** is a blogging platform designed to be hosted on Google App Engine. User's can securely sign-up, login, create posts, comment on posts, and like posts. The platform provides appropriate user permissions and security measures.
 

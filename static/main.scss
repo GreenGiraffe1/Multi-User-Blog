@@ -1,0 +1,51 @@
+* {
+    font-family: 'Roboto', sans-serif;
+}
+body {
+    margin: 0 auto;
+    max-width: 800px;
+}
+h1 {
+    text-align: center;
+}
+.post-subject {
+    font-size: 20px;
+    font-weight: bold;
+}
+.title-link {
+    color: black;
+}
+.nav4blog {
+    display: inline;
+}
+.log-io {
+    display: inline;
+}
+.blog-title-link {
+    text-decoration: none;
+    color: black;
+}
+.post-manip {
+    display: inline;
+}
+.com_manip {
+    display: inline;
+}
+.comment-content {
+    width: 50%;
+}
+.post-header {
+}
+.poster {
+    text-align: right;
+    width: 50%;
+}
+.date-created {
+    width: 50%;
+}
+.container {
+    display: flex;
+}
+.error {
+    color: red;
+}

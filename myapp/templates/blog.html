@@ -1,29 +1,32 @@
         {% extends "base.html" %}
 
         {% block content %}
-                <div class="row create-row">
-                    {% include "createpost.html" %}
-                </div>
-            {% for post in posts %}
-                <br>
-                <br>
-                <div class="post">
-                    <h2><a class="title-link post-subject" href="/blog/{{post.key().id()}}">
-                            {{post.subject | safe}}
-                    </a></h2>
-                    <div class="">
-                        <h5>{{post.created.strftime("%b %d, %Y")}}
-                          /
-                        By: {{post.name}}
-                        </h5>
-                    </div>
-                    <div class="post-content">{{post.content[:400] | safe}}...</div>
-                    <div class="continue-link">
-                        <h5><a href="/blog/{{post.key().id()}}">Read More</a></h5>
-                    </div>
+        {% if uname %}
+            <div class="row create-row">
+                {% include "createpost.html" %}
+            </div>
+        {% endif %}
 
+        {% for post in posts %}
+            <br>
+            <br>
+            <div class="post">
+                <h2><a class="title-link post-subject" href="/blog/{{post.key().id()}}">
+                        {{post.subject | safe}}
+                </a></h2>
+                <div class="">
+                    <h5>{{post.created.strftime("%b %d, %Y")}}
+                      /
+                    By: {{post.name}}
+                    </h5>
                 </div>
-            {% endfor %}
-                <br>
-                <br>
+                <div class="post-content">{{post.content[:400] | safe}}...</div>
+                <div class="continue-link">
+                    <h5><a href="/blog/{{post.key().id()}}">Read More</a></h5>
+                </div>
+
+            </div>
+        {% endfor %}
+            <br>
+            <br>
         {% endblock %}

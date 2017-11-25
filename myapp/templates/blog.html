@@ -1,11 +1,9 @@
         {% extends "base.html" %}
 
         {% block content %}
-        <!-- <br>
-        <form class="nav4blog" action="/blog/newpost">
-            <button type="submit">Create New Post!</button>
-        </form>
-        <br> -->
+        <div class="row create-row">
+            {% include "createpost.html" %}
+        </div>
             {% for post in posts %}
                 <br>
                 <br>

@@ -10,22 +10,26 @@
         <link rel="stylesheet" href="/static/main.css">
     </head>
     <body>
-        <h1><a class="blog-title-link" href="/blog">Matt's Blog</a></h1>
-            {% if uname %}
-                <p class="log-io">You're currently logged in as: {{uname}}</p>
-                <a class="log-io" href="/blog/logout">Logout</a>
-            {% else %}
-                <p class="log-io">You're not currently logged in. </p>
-                <a class="log-io" href="/blog/login">Login</a>
-                <p class="log-io"> or </p>
-                <a class="log-io" href="/blog/signup">Register</a>
-                <p class="log-io"> to Post, Comment on, or Like content.</p>
-            {% endif %}
-        <hr>
-        <hr>
-        <div id="content">
+        <header class="container-fluid">
+            <h1><a class="blog-title-link" href="/blog">Matt's Blog</a></h1>
+                {% if uname %}
+                    <p class="log-io">You're currently logged in as: {{uname}}</p>
+                    <a class="log-io" href="/blog/logout">Logout</a>
+                {% else %}
+                    <p class="log-io">You're not currently logged in. </p>
+                    <a class="log-io" href="/blog/login">Login</a>
+                    <p class="log-io"> or </p>
+                    <a class="log-io" href="/blog/signup">Register</a>
+                    <p class="log-io"> to Post, Comment on, or Like content.</p>
+                {% endif %}
+            <hr>
+            <hr>
+        </header>
+        <div class="container block-stuff" id="content">
             {% block content %}
             {% endblock %}
         </div>
+        <footer class="container-fluid">
+        </footer>
     </body>
 </html>

@@ -37,13 +37,6 @@ footer, header {
 .comment-content {
   width: 50%; }
 
-.poster {
-  text-align: right;
-  width: 50%; }
-
-.date-created {
-  width: 50%; }
-
 .error {
   color: red; }
 

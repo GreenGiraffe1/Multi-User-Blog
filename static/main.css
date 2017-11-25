@@ -12,11 +12,13 @@ footer, header {
   min-height: 100px; }
 
 .post-subject {
-  font-size: 20px;
   font-weight: bold; }
 
 .title-link {
   color: black; }
+
+.continue-link {
+  color: blue; }
 
 .nav4blog {
   display: inline; }

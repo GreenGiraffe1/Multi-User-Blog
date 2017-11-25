@@ -12,6 +12,9 @@ footer, header {
   background-color: lightblue;
   min-height: 100px; }
 
+.date-author {
+  text-align: right; }
+
 .post-subject {
   font-weight: bold; }
 

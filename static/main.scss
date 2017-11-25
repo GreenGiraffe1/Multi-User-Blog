@@ -17,9 +17,31 @@ footer {
 header {
     @extend footer;
 }
+.date-author {
+    // float: right;
+    // margin-right: 0;
+    text-align: right;
+    // vertical-align: baseline;
+    // text-align: bottom;
+    // margin-bottom: 0px;
+    // padding-bottom: 0px;
+}
+.date-created {
+    // vertical-align: bottom;
+}
+// .poster {
+//     @extend .date-created;
+// }
 .post-subject {
     // font-size: 24px;
     font-weight: bold;
+    // vertical-align: super;
+//     margin-top: 0;
+//     padding-top: 0;
+}
+.article-title {
+    // vertical-align: top;
+    // text-align: left;
 }
 .title-link {
     color: black;

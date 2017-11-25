@@ -5,12 +5,14 @@
             <br>
             <br>
             <br>
-            <div class="">
+            <!-- <hr> -->
+            <div class="post-subject col-lg-6"><h2 class="article-title">{{post.subject | safe}}</h2></div>
+            <div class="date-author col-lg-6">
                 <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
                 <div class="poster">By: {{post.name}}</div>
             </div>
-            <hr>
-            <div class="post-subject"><h2>{{post.subject | safe}}</h2></div>
+        </div>
+        <div class="container">
             <br>
             <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
             <br>

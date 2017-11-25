@@ -2,31 +2,34 @@
 
         {% block content %}
         {% if uname %}
-            <div class="row create-row">
+            <div class="container-fluid create-row">
                 {% include "createpost.html" %}
             </div>
         {% endif %}
 
         {% for post in posts %}
-            <br>
-            <br>
-            <div class="post">
-                <h2><a class="title-link post-subject" href="/blog/{{post.key().id()}}">
-                        {{post.subject | safe}}
-                </a></h2>
-                <div class="">
-                    <h5>{{post.created.strftime("%b %d, %Y")}}
-                      /
-                    By: {{post.name}}
-                    </h5>
+            <div class="container">
+                <br>
+                <br>
+                <div class="post">
+                    <h2><a class="title-link post-subject" href="/blog/{{post.key().id()}}">
+                            {{post.subject | safe}}
+                    </a></h2>
+                    <div class="">
+                        <h5>{{post.created.strftime("%b %d, %Y")}}
+                          /
+                        By: {{post.name}}
+                        </h5>
+                    </div>
+                    <div class="post-content">{{post.content[:400] | safe}}...</div>
+                    <div class="continue-link">
+                        <h5><a href="/blog/{{post.key().id()}}">Read More</a></h5>
+                    </div>
                 </div>
-                <div class="post-content">{{post.content[:400] | safe}}...</div>
-                <div class="continue-link">
-                    <h5><a href="/blog/{{post.key().id()}}">Read More</a></h5>
-                </div>
-
             </div>
         {% endfor %}
-            <br>
-            <br>
+            <div class="container">
+                <br>
+                <br>
+            </div>
         {% endblock %}

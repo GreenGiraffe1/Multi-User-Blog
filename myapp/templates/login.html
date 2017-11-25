@@ -1,23 +1,24 @@
         {% extends "base.html" %}
 
         {% block content %}
-        <h2>Login:</h2>
-        <form class="login" method="post">
-            <label>
-                Username:
-                <input type="text" name="username">
-            </label>
-            <br>
-            <label>
-                Password:
-                <input type="password" name="password">
-                <div class="error">
-                    {{error_login}}
+        <div class="container">
+            <h2>Login:</h2>
+            <form class="login" method="post">
+                <label>
+                    Username:
+                    <input type="text" name="username">
+                </label>
+                <br>
+                <label>
+                    Password:
+                    <input type="password" name="password">
+                    <div class="error">
+                        {{error_login}}
+                    </div>
+                </label>
+                <div class="">
+                    <input type="submit" value="Submit">
                 </div>
-            </label>
-            <div class="">
-                <input type="submit" value="Submit">
-            </div>
-
-        </form>
+            </form>
+        </div>
         {% endblock %}

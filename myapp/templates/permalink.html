@@ -9,7 +9,7 @@
             <div class="poster">By: {{post.name}}</div>
         </div>
         <hr>
-        <div class="post-subject"><b>{{post.subject | safe}}</b></div>
+        <div class="post-subject"><h2>{{post.subject | safe}}</h2></div>
         <br>
         <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
         <br>

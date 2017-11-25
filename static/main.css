@@ -5,7 +5,8 @@ body {
   margin: 0 auto; }
 
 h1 {
-  text-align: center; }
+  text-align: center;
+  font-size: 48px; }
 
 footer, header {
   background-color: lightblue;
@@ -25,6 +26,9 @@ footer, header {
 
 .log-io {
   display: inline; }
+
+.log-status {
+  text-align: center; }
 
 .blog-title-link {
   text-decoration: none;

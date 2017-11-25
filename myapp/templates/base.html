@@ -13,14 +13,18 @@
         <header class="container-fluid">
             <h1><a class="blog-title-link" href="/blog">Matt's Blog</a></h1>
                 {% if uname %}
+                <div class="log-status">
                     <p class="log-io">You're currently logged in as: {{uname}}</p>
                     <a class="log-io" href="/blog/logout">Logout</a>
+                </div>
                 {% else %}
+                <div class="log-status">
                     <p class="log-io">You're not currently logged in. </p>
                     <a class="log-io" href="/blog/login">Login</a>
                     <p class="log-io"> or </p>
                     <a class="log-io" href="/blog/signup">Register</a>
                     <p class="log-io"> to Post, Comment on, or Like content.</p>
+                </div>
                 {% endif %}
         </header>
         <div class="container block-stuff" id="content">

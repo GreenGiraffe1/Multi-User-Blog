@@ -6,7 +6,10 @@ body {
 }
 h1 {
     text-align: center;
+    // font-weight: bold;
+    font-size: 48px;
 }
+
 footer {
     background-color: lightblue;
     min-height: 100px;
@@ -29,6 +32,9 @@ header {
 }
 .log-io {
     display: inline;
+}
+.log-status {
+    text-align: center;
 }
 .blog-title-link {
     text-decoration: none;

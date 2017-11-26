@@ -4,9 +4,15 @@
 body {
   margin: 0 auto; }
 
+body, html {
+  height: 100%; }
+
 h1 {
   text-align: center;
   font-size: 48px; }
+
+#block-stuff {
+  min-height: calc(100% - 200px); }
 
 footer, header {
   background-color: lightblue;

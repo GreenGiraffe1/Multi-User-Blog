@@ -27,10 +27,12 @@
                 </div>
                 {% endif %}
         </header>
+        <div id="block-stuff">
+            {% block content %}
+            {% endblock %}
+            
+        </div>
 
-        {% block content %}
-        {% endblock %}
-        
         <footer class="container-fluid">
         </footer>
     </body>

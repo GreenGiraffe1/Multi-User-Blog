@@ -28,6 +28,13 @@ footer {
 header {
     @extend footer;
 }
+textarea {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 100%;
+    // margin-bottom: 30px;
+}
 .date-author {
     // float: right;
     // margin-right: 0;
@@ -86,7 +93,7 @@ header {
     display: inline;
 }
 .comment-content {
-    width: 50%;
+    // width: 50%;
 }
 .error {
     color: red;

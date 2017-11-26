@@ -1,24 +1,19 @@
 * {
     // outline: 1px solid red !important;
-    /*min-height: 100px;*/
 }* {
     font-family: 'Roboto', sans-serif;
 }
 body {
     margin: 0 auto;
-    // min-height: 100vh;
 }
 body, html {
     height: 100%;
 }
 h1 {
     text-align: center;
-    // font-weight: bold;
     font-size: 48px;
 }
 #block-stuff {
-    // min-height: 100vh;
-    // min-height: 100vh;
     min-height: calc(100% - 200px);
 }
 footer {
@@ -33,39 +28,16 @@ textarea {
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%;
-    // margin-bottom: 30px;
 }
 .date-author {
-    // float: right;
-    // margin-right: 0;
     text-align: right;
-    // vertical-align: baseline;
-    // text-align: bottom;
-    // margin-bottom: 0px;
-    // padding-bottom: 0px;
     padding-top: 1.5em;
 }
-.date-created {
-    // vertical-align: bottom;
-}
-// .poster {
-//     @extend .date-created;
-// }
 .post-subject {
-    // font-size: 24px;
     font-weight: bold;
-    // vertical-align: super;
-//     margin-top: 0;
-//     padding-top: 0;
-    // text-align: left;
-    // margin-left: 0;
-    // padding-left: 0;
-// padding: 0;
-    // float: left;
 }
 .article-title {
     font-weight: bold;
-
 }
 .title-link {
     color: black;
@@ -91,9 +63,6 @@ textarea {
 }
 .com_manip {
     display: inline;
-}
-.comment-content {
-    // width: 50%;
 }
 .error {
     color: red;

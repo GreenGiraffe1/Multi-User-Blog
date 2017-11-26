@@ -6,11 +6,14 @@
             <br>
             <br>
             <!-- <hr> -->
-            <div class="post-subject col-sm-10 col-xs-12"><h2 class="article-title">{{post.subject | safe}}</h2></div>
-            <div class="date-author col-sm-2 col-xs-12">
-                <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
-                <div class="poster">By: {{post.name}}</div>
+            <div class="row">
+                <div class="post-subject col-sm-10 col-xs-12"><h2 class="article-title">{{post.subject | safe}}</h2></div>
+                <div class="date-author col-sm-2 col-xs-12">
+                    <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
+                    <div class="poster">By: {{post.name}}</div>
+                </div>
             </div>
+
         </div>
         <div class="container">
             <br>
@@ -46,29 +49,41 @@
                 <button type="submit" name="button">Submit</button>
             </form>
             <br>
+        </div>
+        <div class="container">
             <h3>Comments:</h3>
-                {% for cm in comments %}
-                {% if cm.post_id == cur_post_id and not cm.mod %}<br>
-                    <div class="comment-author"><b>{{cm.name}}</b></div>
-                    <!-- <div class="comment-author1"><h4>{{cm.name}}</h4></div> -->
-                    <!-- <div class="comment-date"><h5 class="comment-date">{{cm.created.strftime("%-m/%d/%y")}}</h5></div> -->
-                    <div class="comment-date"><h5 class="comment-date">{{cm.created.strftime('%m/%d/%Y - %H:%M')}}</h5></div>
-                    <div class="comment-content">{{cm.content.replace('\n', '<br>') | safe}}</div>
+
+            <div class="row">
+                <div class="comment-left col-sm-9 col-md-6 col-xs-12">
+                    {% for cm in comments %}
+                    {% if cm.post_id == cur_post_id and not cm.mod %}<br>
+                        <div class="comment-author"><b>{{cm.name}}</b></div>
+                        <!-- <div class="comment-author1"><h4>{{cm.name}}</h4></div> -->
+                        <!-- <div class="comment-date"><h5 class="comment-date">{{cm.created.strftime("%-m/%d/%y")}}</h5></div> -->
+                        <div class="comment-date"><h5 class="comment-date">{{cm.created.strftime('%m/%d/%Y - %H:%M')}}</h5></div>
+                        <div class="comment-content">{{cm.content.replace('\n', '<br>') | safe}}</div>
 
 
-                {% if current_user == cm.creator and not cm.mod %}
-                    <form class="com_manip" action="/blog/editcomment/{{cm.key().id()}}">
-                    <button type="submit">Edit</button>
-                    </form>
-                    <form class="com-manip" action="/blog/deletecomment/{{cm.key().id()}}">
-                        <button type="submit">Delete</button>
-                    </form>
-                {% endif %}
-                {% endif %}
+                    {% if current_user == cm.creator and not cm.mod %}
+                        <form class="com_manip" action="/blog/editcomment/{{cm.key().id()}}">
+                        <button type="submit">Edit</button>
+                        </form>
+                        <form class="com-manip" action="/blog/deletecomment/{{cm.key().id()}}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    {% endif %}
+                    {% endif %}
+                    <br>
+                    {% endfor %}
                 <br>
-                {% endfor %}
-            <br>
-            <br>
-            <br>
+                <br>
+                <br>
+                </div>
+                <div class="col-sm-3 col-md-6 col-xs-0"></div>
+
+            </div>
+
+        </div>
+
         </div>
         {% endblock %}

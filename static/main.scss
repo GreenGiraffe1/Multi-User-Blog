@@ -1,4 +1,7 @@
 * {
+    outline: 1px solid red !important;
+    /*min-height: 100px;*/
+}* {
     font-family: 'Roboto', sans-serif;
 }
 body {
@@ -33,6 +36,7 @@ header {
     // text-align: bottom;
     // margin-bottom: 0px;
     // padding-bottom: 0px;
+    padding-top: 1.5em;
 }
 .date-created {
     // vertical-align: bottom;
@@ -46,10 +50,18 @@ header {
     // vertical-align: super;
 //     margin-top: 0;
 //     padding-top: 0;
+    // text-align: left;
+    // margin-left: 0;
+    padding-left: 0;
+// padding: 0;
+    // float: left;
 }
 .article-title {
     // vertical-align: top;
     // text-align: left;
+    // margin-left: 0;
+    // padding: 0;
+    // float: left;
 }
 .title-link {
     color: black;

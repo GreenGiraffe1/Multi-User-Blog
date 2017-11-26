@@ -1,4 +1,8 @@
 * {
+  outline: 1px solid red !important;
+  /*min-height: 100px;*/ }
+
+* {
   font-family: 'Roboto', sans-serif; }
 
 body {
@@ -19,10 +23,12 @@ footer, header {
   min-height: 100px; }
 
 .date-author {
-  text-align: right; }
+  text-align: right;
+  padding-top: 1.5em; }
 
 .post-subject {
-  font-weight: bold; }
+  font-weight: bold;
+  padding-left: 0; }
 
 .title-link {
   color: black; }

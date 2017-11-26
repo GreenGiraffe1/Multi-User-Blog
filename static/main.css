@@ -1,5 +1,4 @@
 * {
-  outline: 1px solid red !important;
   /*min-height: 100px;*/ }
 
 * {
@@ -29,6 +28,9 @@ footer, header {
 .post-subject {
   font-weight: bold;
   padding-left: 0; }
+
+.article-title {
+  font-weight: bold; }
 
 .title-link {
   color: black; }

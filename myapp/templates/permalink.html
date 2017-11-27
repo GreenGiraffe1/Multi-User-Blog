@@ -1,5 +1,5 @@
         {% extends "base.html" %}
-        
+
         {% block content %}
         <div class="container">
             <br>
@@ -9,7 +9,7 @@
                 <div class="post-subject col-sm-10 col-xs-12"><h2 class="article-title">{{post.subject | safe}}</h2></div>
                 <div class="date-author col-sm-2 col-xs-12">
                     <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
-                    <div class="poster">By: {{post.name}}</div>
+                    <div class="poster">Posted by: {{post.name}}</div>
                 </div>
             </div>
         </div>

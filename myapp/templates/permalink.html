@@ -11,9 +11,7 @@
             </div>
         </div>
         <div class="container">
-            <br>
             <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
-            <br>
             <div class="post-likes">Likes: {{count}}</div>
                 {% if current_user == post.creator %}
                     <form class="post_manip" action="/blog/edit/{{post.key().id()}}">
@@ -36,7 +34,9 @@
                     Leave a Comment:
                     <textarea name="comment" rows="5" cols="60"></textarea>
                 </label>
-                <button type="submit" name="button">Submit</button>
+                <div class="submit-button">
+                    <button type="submit" name="button">Submit</button>
+                </div>
             </form>
         </div>
         <div class="container comment-section">

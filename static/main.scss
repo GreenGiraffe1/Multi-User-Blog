@@ -1,6 +1,7 @@
 * {
     // outline: 1px solid red !important;
-}* {
+}
+* {
     font-family: 'Roboto', sans-serif;
 }
 body {
@@ -79,9 +80,13 @@ textarea {
 .comment {
     padding-top: 30px;
 }
-.comment-section {
-    // margin-bottom: 50px;
-}
 .post {
     margin-top: 40px;
+}
+.submit-button {
+    margin-bottom: 30px;
+}
+.post-content {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }

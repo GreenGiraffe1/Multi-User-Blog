@@ -14,9 +14,15 @@ h1 {
 #block-stuff {
   min-height: calc(100% - 200px); }
 
-footer, header {
+footer {
   background-color: lightblue;
-  min-height: 100px; }
+  min-height: 100px;
+  margin-top: 50px; }
+
+header {
+  background-color: lightblue;
+  min-height: 100px;
+  margin-bottom: 50px; }
 
 textarea {
   -webkit-box-sizing: border-box;
@@ -67,5 +73,8 @@ textarea {
 
 .comment-date {
   font-size: 10px; }
+
+.comment {
+  padding-top: 30px; }
 
 /*# sourceMappingURL=main.css.map */

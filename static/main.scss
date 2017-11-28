@@ -19,12 +19,12 @@ h1 {
 footer {
     background-color: lightblue;
     min-height: 100px;
-    margin-top: 50px;
+    margin-top: 70px;
 }
 header {
     background-color: lightblue;
     min-height: 100px;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
 }
 textarea {
     -webkit-box-sizing: border-box;
@@ -81,4 +81,7 @@ textarea {
 }
 .comment-section {
     // margin-bottom: 50px;
+}
+.post {
+    margin-top: 40px;
 }

@@ -12,7 +12,7 @@ h1 {
   font-size: 48px; }
 
 #block-stuff {
-  min-height: calc(100% - 200px); }
+  min-height: calc(100% - 100px - 100px - 70px - 30px); }
 
 footer {
   background-color: lightblue;

@@ -38,7 +38,7 @@ Admin functions can be accessed from the [Google Cloud Platform Dashboard](https
 
 ## Attribution
 
-This project was written while I was taking the Udacity Full-Stack Nanodegree, and significant chunks of the structure / ideas behind the structure were provided by the course author.
+This project was written while I was taking the Udacity Full-Stack Nanodegree, and significant chunks of the structure / ideas behind the structure were provided by the course author. Specifically, the functions in ```appfunctions.py``` that deal with hashing were provided in a similar form in the course.  Guidance was also received from course mentors about how to refactor the code into its current modular form. This Application uses [Jinja2](http://jinja.pocoo.org/) for HTML templating, the [Bootstrap](https://getbootstrap.com) framework for UI organization, and [SASS / SCSS](http://sass-lang.com) for style sheet extension.  
 
 
 ## License

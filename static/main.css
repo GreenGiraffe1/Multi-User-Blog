@@ -1,28 +1,72 @@
 * {
   font-family: 'Roboto', sans-serif; }
 
+html, body {
+  height: 100%; }
+
 body {
   margin: 0 auto; }
 
-body, html {
-  height: 100%; }
-
-h1 {
-  text-align: center;
-  font-size: 48px; }
+.error {
+  color: red; }
 
 #block-stuff {
   min-height: calc(100% - 100px - 100px - 70px - 30px); }
-
-footer {
-  background-color: lightblue;
-  min-height: 100px;
-  margin-top: 70px; }
 
 header {
   background-color: lightblue;
   min-height: 100px;
   margin-bottom: 30px; }
+
+h1 {
+  text-align: center;
+  font-size: 48px; }
+
+.blog-title-link {
+  text-decoration: none;
+  color: black; }
+
+.log-status {
+  text-align: center; }
+
+.log-io {
+  display: inline; }
+
+.nav4blog {
+  display: inline; }
+
+.post {
+  margin-top: 40px; }
+
+.title-link {
+  color: black; }
+
+.post-subject {
+  font-weight: bold; }
+
+.post-content {
+  margin-top: 20px;
+  margin-bottom: 20px; }
+
+.continue-link {
+  color: blue; }
+
+.perm-post-subject {
+  font-weight: bold; }
+
+.article-title {
+  font-weight: bold; }
+
+.date-author {
+  text-align: right;
+  padding-top: 1.5em; }
+
+.perm-post-content {
+  margin-top: 20px;
+  margin-bottom: 20px; }
+
+.comment {
+  padding-top: 30px; }
 
 textarea {
   -webkit-box-sizing: border-box;
@@ -30,43 +74,8 @@ textarea {
   box-sizing: border-box;
   width: 100%; }
 
-.date-author {
-  text-align: right;
-  padding-top: 1.5em; }
-
-.post-subject {
-  font-weight: bold; }
-
-.article-title {
-  font-weight: bold; }
-
-.title-link {
-  color: black; }
-
-.continue-link {
-  color: blue; }
-
-.nav4blog {
-  display: inline; }
-
-.log-io {
-  display: inline; }
-
-.log-status {
-  text-align: center; }
-
-.blog-title-link {
-  text-decoration: none;
-  color: black; }
-
-.post-manip {
-  display: inline; }
-
-.com_manip {
-  display: inline; }
-
-.error {
-  color: red; }
+.submit-button {
+  margin-bottom: 30px; }
 
 .comment-author {
   font-size: 18px; }
@@ -74,17 +83,12 @@ textarea {
 .comment-date {
   font-size: 10px; }
 
-.comment {
-  padding-top: 30px; }
+.com-manip {
+  display: inline; }
 
-.post {
-  margin-top: 40px; }
-
-.submit-button {
-  margin-bottom: 30px; }
-
-.post-content {
-  margin-top: 20px;
-  margin-bottom: 20px; }
+footer {
+  background-color: lightblue;
+  min-height: 100px;
+  margin-top: 70px; }
 
 /*# sourceMappingURL=main.css.map */

@@ -3,7 +3,7 @@
         {% block content %}
         <div class="container">
             <div class="row">
-                <div class="post-subject col-sm-10 col-xs-12"><h2 class="article-title">{{post.subject | safe}}</h2></div>
+                <div class="perm-post-subject col-sm-10 col-xs-12"><h2 class="article-title">{{post.subject | safe}}</h2></div>
                 <div class="date-author col-sm-2 col-xs-12">
                     <div class="date-created">{{post.created.strftime("%b %d, %Y")}}</div>
                     <div class="poster">Posted by: {{post.name}}</div>
@@ -11,13 +11,13 @@
             </div>
         </div>
         <div class="container">
-            <div class="post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
+            <div class="perm-post-content">{{post.content.replace('\n', '<br>') | safe}}</div>
             <div class="post-likes">Likes: {{count}}</div>
                 {% if current_user == post.creator %}
-                    <form class="post_manip" action="/blog/edit/{{post.key().id()}}">
+                    <form class="post-manip" action="/blog/edit/{{post.key().id()}}">
                         <button type="submit">Edit</button>
                     </form>
-                    <form class="post_manip" action="/blog/deletepost/{{post.key().id()}}">
+                    <form class="post-manip" action="/blog/deletepost/{{post.key().id()}}">
                         <button type="submit">Delete</button>
                     </form>
                 {% elif current_user != post.creator and display == 'like' %}
@@ -51,7 +51,7 @@
                         <div class="comment-content">{{cm.content.replace('\n', '<br>') | safe}}</div>
                     </div>
                     {% if current_user == cm.creator and not cm.mod %}
-                        <form class="com_manip" action="/blog/editcomment/{{cm.key().id()}}">
+                        <form class="com-manip" action="/blog/editcomment/{{cm.key().id()}}">
                         <button type="submit">Edit</button>
                         </form>
                         <form class="com-manip" action="/blog/deletecomment/{{cm.key().id()}}">

@@ -1,4 +1,4 @@
-# Multi-User Blog
+7# Multi-User Blog
 
 **Multi-User-Blog** is a blogging platform designed to be hosted on Google
 App Engine. User's can securely sign-up, login, create posts, comment on
@@ -73,5 +73,5 @@ uses [Jinja2](http://jinja.pocoo.org/) for HTML templating, the
 
 ## License
 
-**Multi-User-Blog** is a public domain work, with license
-[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
+**Multi-User-Blog** is an open source project created under the
+[MIT License](https://github.com/GreenGiraffe1/Multi-User-Blog/blob/master/LICENSE).

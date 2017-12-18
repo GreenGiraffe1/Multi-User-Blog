@@ -1,4 +1,4 @@
-7# Multi-User Blog
+# Multi-User Blog
 
 **Multi-User-Blog** is a blogging platform designed to be hosted on Google
 App Engine. User's can securely sign-up, login, create posts, comment on
